@@ -4,9 +4,9 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'UpLift - Your AI Journal Companion',
+  description: 'Reflect on your thoughts and feelings with AI-powered insights for emotional wellness and personal growth',
+  generator: 'UpLift Journal App',
 }
 
 export default function RootLayout({

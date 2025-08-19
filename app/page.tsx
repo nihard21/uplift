@@ -2,18 +2,16 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-interface Message {
+interface JournalEntry {
   id: string
   content: string
-  sender: "user" | "ai"
   timestamp: Date
-}
-
-interface Chat {
-  id: string
-  title: string
-  messages: Message[]
-  createdAt: Date
+  aiAnalysis?: {
+    emotions: string[]
+    feelings: string
+    observations: string
+    improvementTips: string[]
+  }
 }
 
 export default function HomePage() {

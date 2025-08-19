@@ -151,15 +151,15 @@ export default function LoginPage() {
           {/* Logo/Brand */}
           <div className="mb-8">
             <h1 className="text-6xl font-bold text-white mb-4 tracking-wide">UpLift</h1>
-            <p className="text-white/80 text-xl mb-2">Your compassionate AI companion</p>
-            <p className="text-white/60 text-lg">for mental wellness and support</p>
+            <p className="text-white/80 text-xl mb-2">Your personal AI journal companion</p>
+            <p className="text-white/60 text-lg">for reflection, growth, and emotional wellness</p>
           </div>
 
           {/* Login Card */}
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl">
             <div className="mb-6">
               <h2 className="text-2xl font-semibold text-white mb-2">Welcome Back</h2>
-              <p className="text-white/70">Ready to continue your wellness journey?</p>
+              <p className="text-white/70">Ready to continue your journaling journey?</p>
             </div>
 
             <Button
@@ -173,7 +173,7 @@ export default function LoginPage() {
                   Signing In...
                 </div>
               ) : (
-                "Sign In to UpLift"
+                "Sign In to Your Journal"
               )}
             </Button>
 
