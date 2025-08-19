@@ -6,8 +6,9 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { Send, Plus, Menu, LogOut, BookOpen, Brain, Lightbulb, Heart, TrendingUp, Calendar } from "lucide-react"
+import { Send, Plus, Menu, LogOut, BookOpen, Brain, Lightbulb, Heart, TrendingUp, Calendar, Bot } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { AIAnalysis } from "@/components/ai-analysis"
 
 interface JournalEntry {
   id: string
@@ -37,6 +38,7 @@ export default function UpLiftJournal() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showTrends, setShowTrends] = useState(false)
+  const [showAIAnalysis, setShowAIAnalysis] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -132,7 +134,7 @@ export default function UpLiftJournal() {
     setIsAnalyzing(false)
   }
 
-  // Mistral AI analysis
+  // Mistral AI analysis using our utility functions
   const analyzeWithMistral = async (content: string) => {
     // Create a more focused and content-specific prompt
     const prompt = `You are an empathetic AI journal analyst. Your task is to carefully analyze the specific journal entry below and provide insights that directly relate to what the person wrote.
@@ -162,40 +164,21 @@ Return your analysis in this exact JSON format (no additional text, just the JSO
 Remember: Analyze what they wrote, not what you think they should write about.`
 
     try {
-      const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer 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`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_new_tokens: 600,
-            temperature: 0.3, // Lower temperature for more focused analysis
-            top_p: 0.8,
-            do_sample: true,
-            return_full_text: false
-          }
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const result = await response.json()
+      // Import our utility functions
+      const { aiAnalysis } = await import('@/lib/huggingface')
+      
+      const result = await aiAnalysis(prompt, 'mistralai/Mistral-7B-Instruct-v0.2', 600, 0.3)
       
       // Parse the response and extract JSON
       try {
-        const analysisText = result[0]?.generated_text || ""
+        const analysisText = result.generated_text || ""
         
         // Look for JSON in the response
         let jsonMatch = analysisText.match(/\{[\s\S]*\}/)
         
         if (!jsonMatch) {
           // If no JSON found, try to extract from the full response
-          jsonMatch = result[0]?.generated_text?.match(/\{[\s\S]*\}/)
+          jsonMatch = result.generated_text?.match(/\{[\s\S]*\}/)
         }
         
         if (jsonMatch) {
@@ -667,20 +650,37 @@ Remember: Analyze what they wrote, not what you think they should write about.`
           {/* Navigation */}
           <div className="space-y-2">
             <Button
-              onClick={() => setShowTrends(false)}
-              className={`w-full justify-start ${!showTrends ? 'bg-orange-600/80 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              onClick={() => {
+                setShowTrends(false)
+                setShowAIAnalysis(false)
+              }}
+              className={`w-full justify-start ${!showTrends && !showAIAnalysis ? 'bg-orange-600/80 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
               variant="ghost"
             >
               <BookOpen className="w-4 h-4 mr-2" />
               Today's Journal
             </Button>
             <Button
-              onClick={() => setShowTrends(true)}
+              onClick={() => {
+                setShowTrends(true)
+                setShowAIAnalysis(false)
+              }}
               className={`w-full justify-start ${showTrends ? 'bg-orange-600/80 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
               variant="ghost"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               Trends & Insights
+            </Button>
+            <Button
+              onClick={() => {
+                setShowTrends(false)
+                setShowAIAnalysis(true)
+              }}
+              className={`w-full justify-start ${showAIAnalysis ? 'bg-orange-600/80 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              variant="ghost"
+            >
+              <Bot className="w-4 h-4 mr-2" />
+              AI Analysis
             </Button>
           </div>
         </div>
@@ -740,6 +740,11 @@ Remember: Analyze what they wrote, not what you think they should write about.`
                   <>
                     <TrendingUp className="w-5 h-5 mr-2" />
                     Trends & Insights
+                  </>
+                ) : showAIAnalysis ? (
+                  <>
+                    <Bot className="w-5 h-5 mr-2" />
+                    AI Analysis
                   </>
                 ) : (
                   <>
@@ -806,6 +811,9 @@ Remember: Analyze what they wrote, not what you think they should write about.`
                 </ul>
               </Card>
             </div>
+          ) : showAIAnalysis ? (
+            // AI Analysis View
+            <AIAnalysis />
           ) : (
             // Journal Entry View
             <>
@@ -855,7 +863,7 @@ Remember: Analyze what they wrote, not what you think they should write about.`
                             <span key={index} className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-sm border border-red-500/30">
                               {emotion}
                             </span>
-                          ))}
+                            ))}
                         </div>
                       </div>
 
