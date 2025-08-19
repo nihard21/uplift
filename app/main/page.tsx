@@ -53,9 +53,9 @@ export default function UpLiftJournal() {
     )
     
     if (!existingEntry) {
-      // Create new daily entry
+      // Create new daily entry with unique ID
       const newEntry: JournalEntry = {
-        id: todayKey,
+        id: `${todayKey}-${Date.now()}`, // Make ID unique with timestamp
         content: "",
         timestamp: today,
       }
@@ -137,37 +137,25 @@ export default function UpLiftJournal() {
   // Mistral AI analysis using our utility functions
   const analyzeWithMistral = async (content: string) => {
     // Create a more focused and content-specific prompt
-    const prompt = `You are an empathetic AI journal analyst. Your task is to carefully analyze the specific journal entry below and provide insights that directly relate to what the person wrote.
+    const prompt = `Analyze this journal entry and provide insights in JSON format:
 
-JOURNAL ENTRY TO ANALYZE:
 "${content}"
 
-ANALYSIS REQUIREMENTS:
-1. **Emotions**: Identify 3 specific emotions that are clearly expressed in this entry. Look for emotional words, tone, and context clues.
-2. **Feelings**: Describe their overall emotional state based on the specific content they wrote. Be specific about what their words reveal.
-3. **Observations**: Make observations about their writing style, thought patterns, or emotional journey that are directly related to this entry.
-4. **Improvement Tips**: Provide 4 actionable tips that are specifically relevant to what they wrote and their current situation.
-5. **Sentiment Score**: Rate their overall emotional tone from 0.0 (very negative) to 1.0 (very positive) based on the content.
-
-IMPORTANT: Base your analysis ONLY on what they actually wrote. Don't make assumptions or give generic advice. If they wrote about work stress, address that. If they wrote about a happy moment, acknowledge that. If they wrote about relationships, focus on that.
-
-Return your analysis in this exact JSON format (no additional text, just the JSON):
+Please analyze the emotions, feelings, observations, and provide improvement tips. Return only valid JSON like this:
 
 {
   "emotions": ["emotion1", "emotion2", "emotion3"],
-  "feelings": "Specific description based on their actual words",
-  "observations": "Observations directly related to their entry content",
+  "feelings": "description of their emotional state",
+  "observations": "observations about their writing and thoughts",
   "improvementTips": ["tip1", "tip2", "tip3", "tip4"],
   "sentimentScore": 0.75
-}
-
-Remember: Analyze what they wrote, not what you think they should write about.`
+}`
 
     try {
       // Import our utility functions
       const { aiAnalysis } = await import('@/lib/huggingface')
       
-      const result = await aiAnalysis(prompt, 'mistralai/Mistral-7B-Instruct-v0.2', 600, 0.3)
+      const result = await aiAnalysis(prompt, 'distilbert-base-uncased', 600, 0.3)
       
       // Parse the response and extract JSON
       try {
@@ -687,9 +675,9 @@ Remember: Analyze what they wrote, not what you think they should write about.`
 
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           <h3 className="text-white/80 text-sm font-medium mb-3">Recent Entries</h3>
-          {journalEntries.slice(0, 10).map((entry) => (
+          {journalEntries.slice(0, 10).map((entry, index) => (
             <Card
-              key={entry.id}
+              key={`${entry.id}-${index}`}
               className={`p-3 cursor-pointer transition-colors bg-white/5 border-white/10 hover:bg-white/10 ${
                 currentEntry?.id === entry.id ? "bg-white/15" : ""
               }`}
