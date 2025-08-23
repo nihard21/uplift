@@ -8,17 +8,17 @@ To use the Hugging Face API in this project, you need to create a `.env.local` f
 
 Create a file named `.env.local` in your project root directory and add:
 
-```bash
+\`\`\`bash
 HUGGING_FACE_API_KEY=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
-```
+\`\`\`
 
 ### Step 2: Restart Development Server
 
 After creating the `.env.local` file, restart your Next.js development server:
 
-```bash
+\`\`\`bash
 pnpm dev
-```
+\`\`\`
 
 **Note:** The application is now configured to run on **localhost:3001** instead of the default port 3000.
 
@@ -27,21 +27,21 @@ pnpm dev
 The project now includes several pre-configured Hugging Face functions powered by **Mistral AI models**:
 
 ### AI Analysis (Mistral-Powered)
-```typescript
+\`\`\`typescript
 import { aiAnalysis } from '@/lib/huggingface';
 
 const result = await aiAnalysis("Analyze this text for emotional content", 'mistralai/Mistral-7B-Instruct-v0.2');
-```
+\`\`\`
 
 ### Text Generation with Mistral
-```typescript
+\`\`\`typescript
 import { textGeneration } from '@/lib/huggingface';
 
 const result = await textGeneration("Hello, how are you?", 'mistralai/Mistral-7B-Instruct-v0.2');
-```
+\`\`\`
 
 ### AI Conversation/Chat
-```typescript
+\`\`\`typescript
 import { aiConversation } from '@/lib/huggingface';
 
 const messages = [
@@ -49,21 +49,21 @@ const messages = [
   { role: 'assistant', content: 'Hi there!' }
 ];
 const result = await aiConversation(messages, 'mistralai/Mistral-7B-Instruct-v0.2');
-```
+\`\`\`
 
 ### Image Classification
-```typescript
+\`\`\`typescript
 import { imageClassification } from '@/lib/huggingface';
 
 const result = await imageClassification("https://example.com/image.jpg");
-```
+\`\`\`
 
 ### Text to Image
-```typescript
+\`\`\`typescript
 import { textToImage } from '@/lib/huggingface';
 
 const result = await textToImage("A beautiful sunset over mountains");
-```
+\`\`\`
 
 ## Available Mistral Models
 

@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -119,5 +119,27 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-weight: 300; /* Light weight for all body text */
+  }
+
+  /* Make headings slightly heavier but still thin */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 400; /* Normal weight for headings */
+  }
+
+  /* Keep buttons at normal weight for readability */
+  button {
+    font-weight: 400;
+  }
+
+  /* Make input text light */
+  input,
+  textarea {
+    font-weight: 300;
   }
 }
