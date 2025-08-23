@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { Send, Plus, Menu, LogOut, BookOpen, Brain, Lightbulb, Heart, TrendingUp, Calendar, Bot } from "lucide-react"
+import { Send, Menu, LogOut, BookOpen, Brain, Lightbulb, Heart, TrendingUp, Calendar, Bot } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { AIAnalysis } from "@/components/ai-analysis"
 
@@ -64,7 +64,7 @@ export default function UpLiftJournal() {
     } else {
       setCurrentEntry(existingEntry)
     }
-  }, [])
+  }, [journalEntries])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -155,7 +155,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
       // Import our utility functions
       const { aiAnalysis } = await import('@/lib/huggingface')
       
-      const result = await aiAnalysis(prompt, 'distilbert-base-uncased', 600, 0.3)
+      const result = await aiAnalysis(prompt, 'distilbert-base-uncased')
       
       // Parse the response and extract JSON
       try {
@@ -342,7 +342,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
 
       const positiveCount = emotionKeywords.positive.filter(word => text.includes(word)).length
       const negativeCount = emotionKeywords.negative.filter(word => text.includes(word)).length
-      const reflectiveCount = emotionKeywords.reflective.filter(word => text.includes(word)).length
+      // const reflectiveCount = emotionKeywords.reflective.filter(word => text.includes(word)).length
 
       if (positiveCount > negativeCount && positiveCount > 0) {
         emotions = ['Happy', 'Positive', 'Grateful']
@@ -623,16 +623,16 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
           <div className="bg-white/10 rounded-lg p-3 mb-4">
             <div className="flex items-center mb-2">
               <Calendar className="w-4 h-4 text-orange-400 mr-2" />
-              <span className="text-white/90 text-sm font-medium">Today's Entry</span>
+              <span className="text-white/90 text-sm font-medium">Today&apos;s Entry</span>
             </div>
-            <p className="text-white/70 text-xs">
-              {currentEntry?.timestamp.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </p>
+                          <p className="text-white/70 text-xs">
+                {currentEntry?.timestamp.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
           </div>
 
           {/* Navigation */}
@@ -646,7 +646,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
               variant="ghost"
             >
               <BookOpen className="w-4 h-4 mr-2" />
-              Today's Journal
+              Today&apos;s Journal
             </Button>
             <Button
               onClick={() => {
@@ -737,7 +737,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
                 ) : (
                   <>
                     <BookOpen className="w-5 h-5 mr-2" />
-                    Today's Journal Entry
+                    Today&apos;s Journal Entry
                   </>
                 )}
               </h2>
@@ -822,7 +822,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
                   {/* Journal Entry */}
                   <Card className="bg-white/15 text-white border-white/20 backdrop-blur-sm p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-semibold">Today's Entry</h3>
+                      <h3 className="text-xl font-semibold">Today&apos;s Entry</h3>
                       <span className="text-white/60 text-sm">
                         {currentEntry.timestamp.toLocaleDateString()} at {currentEntry.timestamp.toLocaleTimeString()}
                       </span>

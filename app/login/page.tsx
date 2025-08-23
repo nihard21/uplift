@@ -186,7 +186,7 @@ export default function LoginPage() {
 
           {/* Additional Info */}
           <div className="mt-8 text-center">
-            <p className="text-white/60 text-sm">Need support? We're here 24/7 to help you on your journey</p>
+            <p className="text-white/60 text-sm">Need support? We&apos;re here 24/7 to help you on your journey</p>
           </div>
         </div>
       </div>

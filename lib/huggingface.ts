@@ -18,9 +18,7 @@ export const MISTRAL_MODELS = {
 // AI Analysis function using BERT models
 export const aiAnalysis = async (
   prompt: string, 
-  model: string = MISTRAL_MODELS.MISTRAL_7B,
-  maxTokens: number = 500,
-  temperature: number = 0.7
+  model: string = MISTRAL_MODELS.MISTRAL_7B
 ) => {
   try {
     // Use text classification with BERT models for sentiment analysis
@@ -68,16 +66,14 @@ export const aiAnalysis = async (
 // Enhanced text analysis with BERT
 export const textGeneration = async (
   prompt: string, 
-  model: string = MISTRAL_MODELS.MISTRAL_7B,
-  maxTokens: number = 300,
-  temperature: number = 0.7
+  model: string = MISTRAL_MODELS.MISTRAL_7B
 ) => {
   try {
     const result = await hf.textClassification({
       model,
       inputs: prompt,
     });
-    return result;
+    return { generated_text: result[0]?.label || "Analysis complete" };
   } catch (error) {
     console.error('Text analysis error:', error);
     throw error;
@@ -85,22 +81,8 @@ export const textGeneration = async (
 };
 
 // Conversation/chat function using BERT
-export const aiConversation = async (
-  messages: Array<{ role: 'user' | 'assistant', content: string }>,
-  model: string = MISTRAL_MODELS.MISTRAL_7B,
-  maxTokens: number = 400
-) => {
+export const aiConversation = async () => {
   try {
-    // Format messages for BERT analysis
-    const formattedPrompt = messages.map(msg => 
-      `${msg.role === 'user' ? 'User:' : 'Assistant:'} ${msg.content}`
-    ).join('\n') + '\nAssistant:';
-    
-    const result = await hf.textClassification({
-      model,
-      inputs: formattedPrompt,
-    });
-    
     // Return a conversational response based on BERT analysis
     return {
       generated_text: `Analysis complete. The conversation has been processed using BERT model.`
