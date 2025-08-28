@@ -1,11 +1,18 @@
 import { HfInference } from '@huggingface/inference';
 
 // Initialize the Hugging Face client
-export const hf = new HfInference(process.env.HUGGING_FACE_API_KEY);
+export const hf = new HfInference(process.env.HUGGING_FACE_API_KEY || '');
 
 // Helper function to check if API key is configured
 export const isHuggingFaceConfigured = (): boolean => {
-  return !!process.env.HUGGING_FACE_API_KEY;
+  // Check both server-side and client-side environment variables
+  if (typeof window === 'undefined') {
+    // Server-side
+    return !!process.env.HUGGING_FACE_API_KEY;
+  } else {
+    // Client-side - we'll need to check via API endpoint
+    return true; // Assume configured for now, will be validated on actual API calls
+  }
 };
 
 // Model configuration - using basic models that should be available
