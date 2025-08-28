@@ -2,17 +2,17 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-interface JournalEntry {
-  id: string
-  content: string
-  timestamp: Date
-  aiAnalysis?: {
-    emotions: string[]
-    feelings: string
-    observations: string
-    improvementTips: string[]
-  }
-}
+// interface JournalEntry {
+//   id: string
+//   content: string
+//   timestamp: Date
+//   aiAnalysis?: {
+//     emotions: string[]
+//     feelings: string
+//     observations: string
+//     improvementTips: string[]
+//   }
+// }
 
 export default function HomePage() {
   const router = useRouter()

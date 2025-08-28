@@ -18,19 +18,13 @@ export default function LoginPage() {
     <div className="h-screen w-full relative overflow-hidden">
       {/* Animated Fireplace Background */}
       <div className="absolute inset-0 w-full h-full">
-        {/* Base fireplace background with ultra-smooth gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-gray-950/95 via-gray-900/90 via-gray-850/85 via-gray-800/80 via-gray-750/75 via-gray-700/70 via-gray-650/65 via-gray-600/60 to-gray-500/55" />
+        {/* Base fireplace background - solid black */}
+        <div className="absolute inset-0 bg-black" />
 
-        {/* Enhanced fireplace glow with ultra-smooth gradients */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-orange-600/60 via-orange-550/55 via-orange-500/50 via-orange-450/45 via-red-600/35 via-red-550/32 via-red-500/28 via-red-450/25 via-orange-400/15 via-orange-350/12 via-orange-300/10 via-orange-250/8 via-orange-200/6 via-orange-150/4 via-orange-100/2 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-red-700/70 via-red-650/65 via-red-600/60 via-red-550/55 via-orange-500/40 via-orange-450/36 via-orange-400/32 via-orange-350/28 via-yellow-500/20 via-yellow-450/18 via-yellow-400/15 via-yellow-350/12 via-yellow-300/10 via-yellow-250/8 via-yellow-200/6 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-yellow-600/45 via-yellow-550/42 via-yellow-500/38 via-yellow-450/35 via-orange-400/25 via-orange-350/22 via-orange-300/20 via-orange-250/18 via-red-300/12 via-red-250/10 via-red-200/8 via-red-150/6 via-red-100/4 via-red-50/2 to-transparent" />
-
-        {/* Ultra-smooth transition gradients to top */}
-        <div className="absolute bottom-64 left-0 right-0 h-96 bg-gradient-to-t from-orange-500/30 via-orange-450/27 via-orange-400/25 via-orange-350/22 via-red-500/20 via-red-450/18 via-red-400/15 via-red-350/13 via-orange-400/12 via-orange-350/10 via-orange-300/9 via-orange-250/8 via-red-400/6 via-red-350/5 via-red-300/3 via-red-250/2 to-transparent" />
-        <div className="absolute bottom-96 left-0 right-0 h-96 bg-gradient-to-t from-orange-400/18 via-orange-350/16 via-orange-300/15 via-orange-250/13 via-red-400/10 via-red-350/9 via-red-300/8 via-red-250/6 via-orange-300/5 via-orange-250/4 via-orange-200/3 via-orange-150/2 via-red-300/2 via-red-250/1 to-transparent" />
-        <div className="absolute bottom-[24rem] left-0 right-0 h-96 bg-gradient-to-t from-orange-300/10 via-orange-250/9 via-orange-200/8 via-orange-150/6 via-red-300/5 via-red-250/4 via-red-200/3 via-red-150/2 via-orange-200/2 via-orange-150/1 to-transparent" />
-        <div className="absolute bottom-[36rem] left-0 right-0 h-96 bg-gradient-to-t from-orange-200/5 via-orange-150/4 via-orange-100/3 via-red-200/2 via-red-150/2 via-red-100/1 via-orange-100/1 to-transparent" />
+        {/* Simple smooth orange glow from bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-orange-600/40 via-orange-500/25 via-orange-400/15 via-orange-300/8 via-orange-200/4 via-orange-100/2 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-red-600/30 via-red-500/20 via-red-400/12 via-red-300/6 via-red-200/3 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-yellow-600/20 via-yellow-500/12 via-yellow-400/8 via-yellow-300/4 via-yellow-200/2 to-transparent" />
 
         {/* Main fire bed spanning across entire bottom - taller for higher flames */}
         <div className="absolute bottom-0 left-0 right-0 h-72 overflow-hidden">
@@ -39,7 +33,7 @@ export default function LoginPage() {
           <div className="absolute bottom-2 left-0 right-0 h-8 bg-gradient-to-r from-red-900/50 via-red-850/55 via-red-800/60 via-orange-800/70 via-orange-750/75 via-orange-700/78 via-amber-800/80 via-amber-750/78 via-amber-700/75 via-orange-800/70 via-orange-750/65 via-orange-700/60 via-red-900/50 via-red-850/45 to-red-800/40 opacity-60" />
           <div className="absolute bottom-4 left-0 right-0 h-6 bg-gradient-to-r from-amber-800/40 via-amber-750/45 via-amber-700/50 via-red-800/60 via-red-750/65 via-red-700/68 via-orange-700/70 via-orange-650/68 via-orange-600/65 via-red-800/60 via-red-750/55 via-red-700/50 via-amber-800/40 via-amber-750/35 to-amber-700/30 opacity-50" />
 
-          {/* Gap-filled flames with original gradients */}
+          {/* Gap-filled flames with original gradients - moved down to connect with orange glow */}
           {Array.from({ length: 120 }, (_, i) => {
             // Perfect coverage positioning
             const basePosition = (i / 119) * 100 // Evenly distribute from 0% to 100%
@@ -61,7 +55,7 @@ export default function LoginPage() {
             return (
               <div
                 key={`flame-${i}`}
-                className={`flame flame-${(i % 7) + 1} absolute bottom-10 bg-gradient-to-t from-red-700 via-orange-500 to-yellow-300 opacity-80`}
+                className={`flame flame-${(i % 7) + 1} absolute bottom-2 bg-gradient-to-t from-red-700 via-orange-500 to-yellow-300 opacity-80`}
                 style={{
                   left: `${position}%`,
                   width: `${width}px`,
@@ -73,7 +67,7 @@ export default function LoginPage() {
             )
           })}
 
-          {/* Gap-filled inner core flames with original gradients */}
+          {/* Gap-filled inner core flames with original gradients - moved down */}
           {Array.from({ length: 80 }, (_, i) => {
             // Perfect inner flame coverage
             const basePosition = (i / 79) * 100 // Even distribution
@@ -95,7 +89,7 @@ export default function LoginPage() {
             return (
               <div
                 key={`inner-flame-${i}`}
-                className={`flame flame-inner-${(i % 4) + 1} absolute bottom-10 bg-gradient-to-t from-yellow-400 via-orange-300 to-yellow-100 opacity-85`}
+                className={`flame flame-inner-${(i % 4) + 1} absolute bottom-2 bg-gradient-to-t from-yellow-400 via-orange-300 to-yellow-100 opacity-85`}
                 style={{
                   left: `${position}%`,
                   width: `${width}px`,
@@ -119,22 +113,31 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Enhanced glowing embers scattered evenly across full width */}
-        <div className="absolute bottom-4 left-0 right-0 h-40">
-          {Array.from({ length: 35 }, (_, i) => {
-            const position = i * 2.86 + 1.43
-            const size = 1 + Math.random() * 2
-            const delay = Math.random() * 6
+        {/* Enhanced glowing embers scattered randomly across screen */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 60 }, (_, i) => {
+            // Random positioning across full screen width
+            const xPosition = Math.random() * 100
+
+            // Random positioning in upper portion of screen (above flames, below top)
+            // Keep them between 20% and 70% of screen height
+            const yPosition = 20 + Math.random() * 50
+
+            const size = 1 + Math.random() * 3
+            const delay = Math.random() * 8
+            const duration = 3 + Math.random() * 4
 
             return (
               <div
                 key={`ember-${i}`}
                 className="ember absolute bg-orange-400 rounded-full animate-ping"
                 style={{
-                  left: `${position}%`,
+                  left: `${xPosition}%`,
+                  top: `${yPosition}%`,
                   width: `${size}px`,
                   height: `${size}px`,
                   animationDelay: `${delay}s`,
+                  animationDuration: `${duration}s`,
                 }}
               />
             )
@@ -143,7 +146,7 @@ export default function LoginPage() {
       </div>
 
       {/* Enhanced Blur Overlay */}
-      <div className="absolute inset-0 bg-black/35 backdrop-blur-[0.5px] z-[1]" />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] z-[1]" />
 
       {/* Login Content */}
       <div className="relative z-[20] flex items-center justify-center h-full">
@@ -151,15 +154,15 @@ export default function LoginPage() {
           {/* Logo/Brand */}
           <div className="mb-8">
             <h1 className="text-6xl font-bold text-white mb-4 tracking-wide">UpLift</h1>
-            <p className="text-white/80 text-xl mb-2">Your personal AI journal companion</p>
-            <p className="text-white/60 text-lg">for reflection, growth, and emotional wellness</p>
+            <p className="text-white/90 text-xl mb-2">Your personal AI journal companion</p>
+            <p className="text-white/80 text-lg">for reflection, growth, and emotional wellness</p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl">
+          <div className="bg-white/15 backdrop-blur-md border border-white/30 rounded-2xl p-8 shadow-2xl">
             <div className="mb-6">
               <h2 className="text-2xl font-semibold text-white mb-2">Welcome Back</h2>
-              <p className="text-white/70">Ready to continue your journaling journey?</p>
+              <p className="text-white/80">Ready to continue your journaling journey?</p>
             </div>
 
             <Button
@@ -178,7 +181,7 @@ export default function LoginPage() {
             </Button>
 
             <div className="mt-6 text-center">
-              <p className="text-white/50 text-sm">
+              <p className="text-white/60 text-sm">
                 By signing in, you agree to our commitment to your privacy and wellbeing
               </p>
             </div>
@@ -186,7 +189,7 @@ export default function LoginPage() {
 
           {/* Additional Info */}
           <div className="mt-8 text-center">
-            <p className="text-white/60 text-sm">Need support? We're here 24/7 to help you on your journey</p>
+            <p className="text-white/70 text-sm">Need support? We&apos;re here 24/7 to help you on your journey</p>
           </div>
         </div>
       </div>
