@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Send, Menu, LogOut, BookOpen, Brain, Lightbulb, Heart, TrendingUp, Calendar } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { AIAnalysis } from "@/components/ai-analysis"
 
 interface JournalEntry {
   id: string
