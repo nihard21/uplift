@@ -135,7 +135,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
       // Import our utility functions
       const { aiAnalysis } = await import("@/lib/huggingface")
 
-      const result = await aiAnalysis(prompt, "distilbert-base-uncased")
+      const result = await aiAnalysis(prompt, "distilgpt2")
 
       // Parse the response and extract JSON
       try {
@@ -592,21 +592,21 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
           <div className="absolute bottom-2 left-0 right-0 h-8 bg-gradient-to-r from-red-900/50 via-red-850/55 via-red-800/60 via-orange-800/70 via-orange-750/75 via-orange-700/78 via-amber-800/80 via-amber-750/78 via-amber-700/75 via-orange-800/70 via-orange-750/65 via-orange-700/60 via-red-900/50 via-red-850/45 to-red-800/40 opacity-60" />
           <div className="absolute bottom-4 left-0 right-0 h-6 bg-gradient-to-r from-amber-800/40 via-amber-750/45 via-amber-700/50 via-red-800/60 via-red-750/65 via-red-700/68 via-orange-700/70 via-orange-650/68 via-orange-600/65 via-red-800/60 via-red-750/55 via-red-700/50 via-amber-800/40 via-amber-750/35 to-amber-700/30 opacity-50" />
 
-          {/* Gap-filling flames with original gradients - moved down to connect with orange glow */}
+          {/* Gap-filling flames with deterministic positioning */}
           {Array.from({ length: 100 }, (_, i) => {
-            // Ensure complete coverage by using precise positioning
+            // Use deterministic positioning based on index to avoid hydration issues
             const basePosition = (i / 99) * 100 // Evenly distribute from 0% to 100%
-            const randomOffset = Math.sin(i * 2.3) * Math.cos(i * 1.7) * Math.sin(i * 0.9) * 1.5 // Smaller offset to prevent gaps
-            const position = Math.max(0, Math.min(100, basePosition + randomOffset))
+            const offset = Math.sin(i * 2.3) * Math.cos(i * 1.7) * Math.sin(i * 0.9) * 1.5
+            const position = Math.max(0, Math.min(100, basePosition + offset))
 
-            // Higher flames with more natural height variations
+            // Deterministic height variations
             const baseHeight = 45
             const heightVariation = Math.sin(i * 1.3) * Math.cos(i * 2.1) * Math.sin(i * 0.7) * 25
-            const randomHeight = Math.sin(i * 3.7) * Math.cos(i * 1.9) * 12
-            const height = Math.max(25, baseHeight + heightVariation + randomHeight)
+            const additionalHeight = Math.sin(i * 3.7) * Math.cos(i * 1.9) * 12
+            const height = Math.max(25, baseHeight + heightVariation + additionalHeight)
 
-            // Natural width variations - wider to fill gaps
-            const baseWidth = 10 // Increased base width to fill gaps
+            // Deterministic width variations
+            const baseWidth = 10
             const widthVariation = Math.cos(i * 1.8) * Math.sin(i * 2.4) * 4
             const width = Math.max(6, baseWidth + widthVariation)
 
@@ -625,22 +625,22 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
             )
           })}
 
-          {/* Inner core flames with original gradients - moved down */}
+          {/* Inner core flames with deterministic positioning */}
           {Array.from({ length: 70 }, (_, i) => {
-            // Ensure inner flame coverage
+            // Deterministic inner flame positioning
             const basePosition = (i / 69) * 100 // Even distribution
-            const randomOffset = Math.sin(i * 3.1) * Math.cos(i * 1.4) * Math.sin(i * 2.8) * 2
-            const position = Math.max(0, Math.min(100, basePosition + randomOffset))
+            const offset = Math.sin(i * 3.1) * Math.cos(i * 1.4) * Math.sin(i * 2.8) * 2
+            const position = Math.max(0, Math.min(100, basePosition + offset))
 
-            // Higher inner flames with natural variations
+            // Deterministic height variations
             const baseHeight = 35
-            const heightChaos = Math.sin(i * 2.7) * Math.cos(i * 1.6) * Math.sin(i * 3.2) * 20
-            const height = Math.max(18, baseHeight + heightChaos)
+            const heightVariation = Math.sin(i * 2.7) * Math.cos(i * 1.6) * Math.sin(i * 3.2) * 20
+            const height = Math.max(18, baseHeight + heightVariation)
 
-            // Wider inner flames to fill gaps
-            const baseWidth = 8 // Increased width
-            const widthChaos = Math.cos(i * 2.9) * Math.sin(i * 1.8) * 3
-            const width = Math.max(4, baseWidth + widthChaos)
+            // Deterministic width variations
+            const baseWidth = 8
+            const widthVariation = Math.cos(i * 2.9) * Math.sin(i * 1.8) * 3
+            const width = Math.max(4, baseWidth + widthVariation)
 
             return (
               <div
@@ -669,19 +669,17 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
           />
         </div>
 
-        {/* Enhanced glowing embers scattered randomly across screen */}
+        {/* Enhanced glowing embers with deterministic positioning */}
         <div className="absolute inset-0">
           {Array.from({ length: 60 }, (_, i) => {
-            // Random positioning across full screen width
-            const xPosition = Math.random() * 100
-
-            // Random positioning in upper portion of screen (above flames, below top)
-            // Keep them between 20% and 70% of screen height
-            const yPosition = 20 + Math.random() * 50
-
-            const size = 1 + Math.random() * 3
-            const delay = Math.random() * 8
-            const duration = 3 + Math.random() * 4
+            // Deterministic positioning based on index
+            const xPosition = (i * 1.618) % 100 // Golden ratio distribution
+            const yPosition = 20 + ((i * 2.718) % 50) // Euler's number distribution
+            
+            // Deterministic size and timing
+            const size = 1 + (i % 3) + (i * 0.1) % 2
+            const delay = (i * 0.133) % 8
+            const duration = 3 + (i * 0.067) % 4
 
             return (
               <div
@@ -1006,23 +1004,23 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         {/* Input - Only show for journal entries */}
         {!showTrends && (
           <div className="p-4 border-t border-white/10 bg-black/50 backdrop-blur-sm relative">
-            {/* Fire effect behind input - gap-filled flames */}
+            {/* Fire effect behind input - deterministic flames */}
             <div className="absolute bottom-0 left-4 right-4 h-32 overflow-hidden pointer-events-none">
               {Array.from({ length: 50 }, (_, i) => {
-                // Gap-filling positioning for input flames
+                // Deterministic positioning for input flames
                 const basePosition = (i / 49) * 100 // Even distribution
-                const randomOffset = Math.sin(i * 2.7) * Math.cos(i * 1.9) * 1
-                const position = Math.max(0, Math.min(100, basePosition + randomOffset))
+                const offset = Math.sin(i * 2.7) * Math.cos(i * 1.9) * 1
+                const position = Math.max(0, Math.min(100, basePosition + offset))
 
-                // Natural height variations
+                // Deterministic height variations
                 const baseHeight = 16
-                const heightChaos = Math.sin(i * 1.8) * Math.cos(i * 2.3) * 8
-                const height = Math.max(8, baseHeight + heightChaos)
+                const heightVariation = Math.sin(i * 1.8) * Math.cos(i * 2.3) * 8
+                const height = Math.max(8, baseHeight + heightVariation)
 
-                // Wider flames to fill gaps
-                const baseWidth = 6 // Increased width
-                const widthChaos = Math.cos(i * 2.1) * 2
-                const width = Math.max(4, baseWidth + widthChaos)
+                // Deterministic width variations
+                const baseWidth = 6
+                const widthVariation = Math.cos(i * 2.1) * 2
+                const width = Math.max(4, baseWidth + widthVariation)
 
                 return (
                   <div

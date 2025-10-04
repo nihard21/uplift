@@ -29,8 +29,8 @@ export function AIAnalysis() {
 
   // Check configuration on component mount
   useEffect(() => {
-    const checkConfig = async () => {
-      const configured = await isHuggingFaceConfigured();
+    const checkConfig = () => {
+      const configured = isHuggingFaceConfigured();
       setIsConfigured(configured);
     };
     checkConfig();
@@ -260,21 +260,21 @@ Use an empathetic, non-judgmental tone. Validate feelings while encouraging self
               size="sm"
               onClick={() => setSelectedModel(MISTRAL_MODELS.MISTRAL_7B)}
             >
-              DialoGPT Medium
+              DistilGPT-2
             </Button>
             <Button
               variant={selectedModel === MISTRAL_MODELS.MIXTRAL_8X7B ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedModel(MISTRAL_MODELS.MIXTRAL_8X7B)}
             >
-              GPT-2
+              BlenderBot
             </Button>
             <Button
               variant={selectedModel === MISTRAL_MODELS.MISTRAL_SMALL ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedModel(MISTRAL_MODELS.MISTRAL_SMALL)}
             >
-              DialoGPT Medium
+              DialoGPT Small
             </Button>
           </div>
 
