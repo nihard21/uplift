@@ -260,7 +260,7 @@ Use an empathetic, non-judgmental tone. Validate feelings while encouraging self
               size="sm"
               onClick={() => setSelectedModel(MISTRAL_MODELS.MISTRAL_7B)}
             >
-              DistilGPT-2
+              GPT-2
             </Button>
             <Button
               variant={selectedModel === MISTRAL_MODELS.MIXTRAL_8X7B ? "default" : "outline"}

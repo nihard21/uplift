@@ -61,15 +61,18 @@ export default function UpLiftJournal() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
+  // Initialize or get today's entry - fixed to prevent infinite re-renders
   useEffect(() => {
     const today = new Date()
     const todayKey = today.toDateString()
 
+    // Check if we already have today's entry
     const existingEntry = journalEntries.find((entry) => entry.timestamp.toDateString() === todayKey)
 
     if (!existingEntry) {
+      // Create new daily entry with unique ID
       const newEntry: JournalEntry = {
-        id: `${todayKey}-${Date.now()}`,
+        id: `${todayKey}-${Date.now()}`, // Make ID unique with timestamp
         content: "",
         timestamp: today,
       }
@@ -78,7 +81,7 @@ export default function UpLiftJournal() {
     } else {
       setCurrentEntry(existingEntry)
     }
-  }, [journalEntries])
+  }, []) // Remove journalEntries from dependency array to prevent infinite re-renders
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -174,7 +177,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     try {
       const { aiAnalysis } = await import("@/lib/huggingface")
 
-      const result = await aiAnalysis(prompt, "distilgpt2")
+      const result = await aiAnalysis(prompt, "gpt2")
 
       try {
         const analysisText = result.generated_text || ""
@@ -591,15 +594,19 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     <div className="h-screen w-full relative overflow-hidden bg-[#2A1F1A]">
       {/* Interactive Dot Grid Background */}
       <DotGrid
-        dotSize={3}
-        gap={40}
+        dotSize={8}
+        gap={20}
         baseColor="#2A1F1A"
-        activeColor="#2F3D2C"
-        proximity={120}
-        speedTrigger={80}
-        shockRadius={200}
-        shockStrength={4}
-        className="absolute inset-0 z-0 opacity-40"
+        activeColor="#6B5647"
+        proximity={80}
+        speedTrigger={50}
+        shockRadius={150}
+        shockStrength={8}
+        maxSpeed={3000}
+        resistance={500}
+        returnDuration={1.2}
+        className="absolute inset-0 z-0 opacity-80"
+        style={{}}
       />
 
       {/* Deeper gradient for more contrast */}

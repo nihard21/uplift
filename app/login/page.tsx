@@ -2,6 +2,9 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
+
+const DotGrid = dynamic(() => import("@/components/DotGrid"), { ssr: false })
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -15,11 +18,28 @@ export default function LoginPage() {
 
   return (
     <div className="h-screen w-full relative overflow-hidden bg-[#2A1F1A]">
+      {/* Interactive Dot Grid Background */}
+      <DotGrid
+        dotSize={8}
+        gap={20}
+        baseColor="#2A1F1A"
+        activeColor="#6B5647"
+        proximity={80}
+        speedTrigger={50}
+        shockRadius={150}
+        shockStrength={8}
+        maxSpeed={3000}
+        resistance={500}
+        returnDuration={1.2}
+        className="absolute inset-0 z-0 opacity-80"
+        style={{}}
+      />
+
       {/* Deeper gradient for more contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#1A1410]/60 via-transparent to-[#3D4F3A]/15" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A1410]/60 via-transparent to-[#3D4F3A]/15 z-[1]" />
 
       {/* Green nature accent - subtle vine pattern */}
-      <div className="absolute top-0 right-0 w-64 h-64 opacity-[0.08]">
+      <div className="absolute top-0 right-0 w-64 h-64 opacity-[0.08] z-[1]">
         <svg viewBox="0 0 200 200" className="w-full h-full text-[#2F3D2C]">
           <path
             d="M100,10 Q120,40 100,70 Q80,100 100,130 Q120,160 100,190"
@@ -34,19 +54,12 @@ export default function LoginPage() {
         </svg>
       </div>
 
-      {/* Subtle texture overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23FFF8E7' fillOpacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}
-      />
 
       {/* Warm ambient glow */}
-      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-[#6B5647]/20 via-[#4A3A2E]/10 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-[#6B5647]/20 via-[#4A3A2E]/10 to-transparent z-[1]" />
 
       {/* Floating particles */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-[1]">
         {Array.from({ length: 20 }, (_, i) => {
           const xPosition = (i * 5.2) % 100
           const yPosition = 10 + ((i * 4.3) % 80)

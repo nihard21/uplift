@@ -17,7 +17,7 @@ export const isHuggingFaceConfigured = (): boolean => {
 
 // Model configuration - using models that work with Hugging Face Inference API
 export const MISTRAL_MODELS = {
-  MISTRAL_7B: 'distilgpt2', // Lightweight GPT-2 variant
+  MISTRAL_7B: 'gpt2', // GPT-2 is widely available
   MIXTRAL_8X7B: 'facebook/blenderbot-400M-distill', // Conversational model
   MISTRAL_SMALL: 'microsoft/DialoGPT-small', // Small conversational model
 } as const;
@@ -30,45 +30,9 @@ export const aiAnalysis = async (
   temperature: number = 0.7,
   customPrompt?: string
 ) => {
-  // First, try to use Hugging Face API if available
-  if (process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY && process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY !== 'your_api_key_here') {
-    try {
-      // Create a focused prompt for journal analysis
-      const analysisPrompt = customPrompt || `You are a compassionate AI life coach analyzing a journal entry. Please provide insights in this exact JSON format:
-
-{
-  "emotions": ["emotion1", "emotion2", "emotion3"],
-  "feelings": "description of their emotional state",
-  "observations": "observations about their writing and thoughts", 
-  "improvementTips": ["tip1", "tip2", "tip3", "tip4"],
-  "sentimentScore": 0.75
-}
-
-Journal entry: "${prompt}"`;
-
-      // Try text generation with the specified model
-      const result = await hf.textGeneration({
-        model,
-        inputs: analysisPrompt,
-        parameters: {
-          max_new_tokens: maxTokens,
-          temperature: temperature,
-          return_full_text: false,
-          do_sample: true,
-        },
-      });
-      
-      return {
-        generated_text: result.generated_text || 'No response generated'
-      };
-    } catch (error) {
-      console.error('Hugging Face API failed:', error);
-      console.log('Falling back to local analysis...');
-    }
-  } else {
-    console.log('No valid API key found, using local analysis...');
-  }
-
+  // For now, use the intelligent fallback system since HF models are unreliable
+  console.log('Using intelligent fallback analysis system...');
+  
   // Fallback to local analysis
   const fallbackAnalysis = getFallbackAnalysis(prompt);
   return {
@@ -95,36 +59,29 @@ export const textGeneration = async (
   }
 };
 
-// Conversation/chat function using text generation
+// Conversation/chat function using intelligent fallback
 export const aiConversation = async (
   messages: Array<{ role: 'user' | 'assistant', content: string }>,
   model: string = MISTRAL_MODELS.MISTRAL_7B,
   maxTokens: number = 400
 ) => {
-  try {
-    // Format messages for conversational AI
-    const formattedPrompt = messages.map(msg => 
-      `${msg.role === 'user' ? 'Human:' : 'Assistant:'} ${msg.content}`
-    ).join('\n') + '\nAssistant:';
-    
-    const result = await hf.textGeneration({
-      model,
-      inputs: formattedPrompt,
-      parameters: {
-        max_new_tokens: maxTokens,
-        temperature: 0.7,
-        return_full_text: false,
-        do_sample: true,
-      },
-    });
-    
-    return {
-      generated_text: result.generated_text || 'I understand. How can I help you further?'
-    };
-  } catch (error) {
-    console.error('AI Conversation error:', error);
-    throw error;
+  // Use intelligent fallback for conversations
+  console.log('Using intelligent fallback conversation system...');
+  
+  const lastMessage = messages[messages.length - 1];
+  if (!lastMessage || lastMessage.role !== 'user') {
+    return { generated_text: 'I understand. How can I help you further?' };
   }
+
+  // Generate a contextual response based on the last message
+  const fallbackAnalysis = getFallbackAnalysis(lastMessage.content);
+  
+  // Create a conversational response
+  const response = `Based on your message, I can see you're feeling ${fallbackAnalysis.emotions.join(', ').toLowerCase()}. ${fallbackAnalysis.feelings} Here are some thoughts: ${fallbackAnalysis.observations} Consider these suggestions: ${fallbackAnalysis.improvementTips.join(', ')}`;
+  
+  return {
+    generated_text: response
+  };
 };
 
 // Image Classification
