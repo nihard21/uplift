@@ -21,17 +21,17 @@ The console shows old Hugging Face client code is still running instead of our n
 
 ### 3. Check Console for New Logs
 After clearing cache, you should see:
-```
+\`\`\`
 Testing API connection...
 Calling AI analysis API with: { prompt: "...", model: "...", ... }
 API response: { success: true, generated_text: "..." }
-```
+\`\`\`
 
 ### 4. Verify Environment Variable
 1. Check your `.env.local` file has:
-   ```bash
+   \`\`\`bash
    HUGGING_FACE_API_KEY=your_actual_key_here
-   ```
+   \`\`\`
 2. Restart your development server
 3. Check server console for any errors
 
@@ -63,11 +63,11 @@ Ensure these files exist and are correct:
 
 ## Quick Test
 Try this in the browser console:
-```javascript
+\`\`\`javascript
 fetch('/api/ai-analysis', { method: 'GET' })
   .then(r => r.json())
   .then(console.log)
   .catch(console.error)
-```
+\`\`\`
 
 This should return a test response if the API route is working.

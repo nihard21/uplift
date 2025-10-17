@@ -16,10 +16,10 @@ To get your AI analysis working, you need to create a `.env.local` file in your 
 
 Create a file called `.env.local` in your project root (same level as `package.json`):
 
-```bash
+\`\`\`bash
 # .env.local
 HUGGING_FACE_API_KEY=your_api_key_here
-```
+\`\`\`
 
 **Important**: 
 - Use `HUGGING_FACE_API_KEY` (no NEXT_PUBLIC_ prefix needed)
@@ -30,11 +30,11 @@ HUGGING_FACE_API_KEY=your_api_key_here
 
 After creating the `.env.local` file, restart your Next.js development server:
 
-```bash
+\`\`\`bash
 npm run dev
 # or
 pnpm dev
-```
+\`\`\`
 
 ## Why This Fixes the Issue
 

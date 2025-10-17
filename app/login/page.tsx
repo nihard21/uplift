@@ -9,170 +9,93 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     setIsLoading(true)
-    // Simulate login process
     await new Promise((resolve) => setTimeout(resolve, 1500))
     router.push("/main")
   }
 
   return (
-    <div className="h-screen w-full relative overflow-hidden">
-      {/* Animated Fireplace Background */}
-      <div className="absolute inset-0 w-full h-full">
-        {/* Base fireplace background - solid black */}
-        <div className="absolute inset-0 bg-black" />
+    <div className="h-screen w-full relative overflow-hidden bg-[#2A1F1A]">
+      {/* Deeper gradient for more contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A1410]/60 via-transparent to-[#3D4F3A]/15" />
 
-        {/* Simple smooth orange glow from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-orange-600/40 via-orange-500/25 via-orange-400/15 via-orange-300/8 via-orange-200/4 via-orange-100/2 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-red-600/30 via-red-500/20 via-red-400/12 via-red-300/6 via-red-200/3 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-yellow-600/20 via-yellow-500/12 via-yellow-400/8 via-yellow-300/4 via-yellow-200/2 to-transparent" />
-
-        {/* Main fire bed spanning across entire bottom - taller for higher flames */}
-        <div className="absolute bottom-0 left-0 right-0 h-72 overflow-hidden">
-          {/* Fire logs base with ultra-smooth gradients */}
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-r from-amber-900/60 via-amber-850/65 via-amber-800/70 via-orange-900/80 via-orange-850/85 via-orange-800/88 via-red-900/90 via-red-850/88 via-red-800/85 via-orange-900/80 via-orange-850/75 via-orange-800/70 via-amber-900/60 via-amber-850/55 to-amber-800/50 opacity-70" />
-          <div className="absolute bottom-2 left-0 right-0 h-8 bg-gradient-to-r from-red-900/50 via-red-850/55 via-red-800/60 via-orange-800/70 via-orange-750/75 via-orange-700/78 via-amber-800/80 via-amber-750/78 via-amber-700/75 via-orange-800/70 via-orange-750/65 via-orange-700/60 via-red-900/50 via-red-850/45 to-red-800/40 opacity-60" />
-          <div className="absolute bottom-4 left-0 right-0 h-6 bg-gradient-to-r from-amber-800/40 via-amber-750/45 via-amber-700/50 via-red-800/60 via-red-750/65 via-red-700/68 via-orange-700/70 via-orange-650/68 via-orange-600/65 via-red-800/60 via-red-750/55 via-red-700/50 via-amber-800/40 via-amber-750/35 to-amber-700/30 opacity-50" />
-
-          {/* Gap-filled flames with original gradients - moved down to connect with orange glow */}
-          {Array.from({ length: 120 }, (_, i) => {
-            // Perfect coverage positioning
-            const basePosition = (i / 119) * 100 // Evenly distribute from 0% to 100%
-            const chaos1 = Math.sin(i * 2.7) * Math.cos(i * 1.3) * 1.2 // Smaller offset to prevent gaps
-            const chaos2 = Math.sin(i * 3.9) * Math.cos(i * 2.1) * 0.8
-            const position = Math.max(0, Math.min(100, basePosition + chaos1 + chaos2))
-
-            // Much higher flames with natural height variations
-            const baseHeight = 55
-            const heightChaos1 = Math.sin(i * 1.7) * Math.cos(i * 2.9) * 30
-            const heightChaos2 = Math.sin(i * 3.1) * Math.cos(i * 1.4) * 18
-            const height = Math.max(30, baseHeight + heightChaos1 + heightChaos2)
-
-            // Wider flames to ensure no gaps
-            const baseWidth = 12 // Increased width for gap coverage
-            const widthChaos1 = Math.cos(i * 2.4) * Math.sin(i * 1.6) * 5
-            const width = Math.max(6, baseWidth + widthChaos1)
-
-            return (
-              <div
-                key={`flame-${i}`}
-                className={`flame flame-${(i % 7) + 1} absolute bottom-2 bg-gradient-to-t from-red-700 via-orange-500 to-yellow-300 opacity-80`}
-                style={{
-                  left: `${position}%`,
-                  width: `${width}px`,
-                  height: `${height}px`,
-                  clipPath:
-                    "polygon(45% 100%, 25% 85%, 35% 65%, 15% 45%, 30% 25%, 50% 35%, 65% 15%, 75% 30%, 85% 10%, 90% 25%, 80% 45%, 95% 65%, 75% 85%, 55% 100%)",
-                }}
-              />
-            )
-          })}
-
-          {/* Gap-filled inner core flames with original gradients - moved down */}
-          {Array.from({ length: 80 }, (_, i) => {
-            // Perfect inner flame coverage
-            const basePosition = (i / 79) * 100 // Even distribution
-            const innerChaos1 = Math.sin(i * 4.1) * Math.cos(i * 1.7) * 1.5
-            const innerChaos2 = Math.sin(i * 2.6) * Math.cos(i * 3.3) * 1
-            const position = Math.max(0, Math.min(100, basePosition + innerChaos1 + innerChaos2))
-
-            // Much higher inner flames with natural variations
-            const baseHeight = 45
-            const innerHeightChaos1 = Math.sin(i * 3.4) * Math.cos(i * 1.9) * 25
-            const innerHeightChaos2 = Math.sin(i * 2.1) * Math.cos(i * 4.2) * 15
-            const height = Math.max(22, baseHeight + innerHeightChaos1 + innerHeightChaos2)
-
-            // Wider inner flames for gap coverage
-            const baseWidth = 9 // Increased width
-            const innerWidthChaos = Math.cos(i * 3.7) * Math.sin(i * 2.2) * 4
-            const width = Math.max(5, baseWidth + innerWidthChaos)
-
-            return (
-              <div
-                key={`inner-flame-${i}`}
-                className={`flame flame-inner-${(i % 4) + 1} absolute bottom-2 bg-gradient-to-t from-yellow-400 via-orange-300 to-yellow-100 opacity-85`}
-                style={{
-                  left: `${position}%`,
-                  width: `${width}px`,
-                  height: `${height}px`,
-                  clipPath:
-                    "polygon(50% 100%, 30% 88%, 40% 68%, 20% 48%, 35% 28%, 55% 38%, 70% 18%, 80% 33%, 90% 13%, 95% 28%, 85% 48%, 100% 68%, 80% 88%, 60% 100%)",
-                }}
-              />
-            )
-          })}
-
-          {/* Hot coals glow with ultra-smooth gradients */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-r from-red-600/60 via-red-550/62 via-red-500/65 via-orange-500/80 via-orange-450/78 via-orange-400/75 via-yellow-500/70 via-yellow-450/72 via-yellow-400/75 via-orange-500/80 via-orange-450/78 via-orange-400/75 via-red-600/60 via-red-550/58 to-red-500/55 opacity-70 animate-pulse" />
-          <div
-            className="absolute bottom-1 left-0 right-0 h-6 bg-gradient-to-r from-orange-400/50 via-orange-350/55 via-orange-300/60 via-yellow-400/70 via-yellow-350/68 via-yellow-300/65 via-red-400/60 via-red-350/62 via-red-300/65 via-yellow-400/70 via-yellow-350/68 via-yellow-300/65 via-orange-400/50 via-orange-350/48 to-orange-300/45 opacity-80 animate-pulse"
-            style={{ animationDelay: "1s" }}
+      {/* Green nature accent - subtle vine pattern */}
+      <div className="absolute top-0 right-0 w-64 h-64 opacity-[0.08]">
+        <svg viewBox="0 0 200 200" className="w-full h-full text-[#2F3D2C]">
+          <path
+            d="M100,10 Q120,40 100,70 Q80,100 100,130 Q120,160 100,190"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            opacity="0.6"
           />
-          <div
-            className="absolute bottom-2 left-0 right-0 h-4 bg-gradient-to-r from-yellow-300/40 via-yellow-250/45 via-yellow-200/50 via-orange-300/60 via-orange-250/58 via-orange-200/55 via-yellow-300/50 via-yellow-250/52 via-yellow-200/55 via-orange-300/60 via-orange-250/58 via-orange-200/55 via-yellow-300/40 via-yellow-250/38 to-yellow-200/35 opacity-60 animate-pulse"
-            style={{ animationDelay: "2s" }}
-          />
-        </div>
-
-        {/* Enhanced glowing embers scattered randomly across screen */}
-        <div className="absolute inset-0">
-          {Array.from({ length: 60 }, (_, i) => {
-            // Random positioning across full screen width
-            const xPosition = Math.random() * 100
-
-            // Random positioning in upper portion of screen (above flames, below top)
-            // Keep them between 20% and 70% of screen height
-            const yPosition = 20 + Math.random() * 50
-
-            const size = 1 + Math.random() * 3
-            const delay = Math.random() * 8
-            const duration = 3 + Math.random() * 4
-
-            return (
-              <div
-                key={`ember-${i}`}
-                className="ember absolute bg-orange-400 rounded-full animate-ping"
-                style={{
-                  left: `${xPosition}%`,
-                  top: `${yPosition}%`,
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  animationDelay: `${delay}s`,
-                  animationDuration: `${duration}s`,
-                }}
-              />
-            )
-          })}
-        </div>
+          <circle cx="100" cy="30" r="8" fill="currentColor" opacity="0.4" />
+          <circle cx="100" cy="90" r="10" fill="currentColor" opacity="0.4" />
+          <circle cx="100" cy="150" r="7" fill="currentColor" opacity="0.4" />
+        </svg>
       </div>
 
-      {/* Enhanced Blur Overlay */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] z-[1]" />
+      {/* Subtle texture overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23FFF8E7' fillOpacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Warm ambient glow */}
+      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-[#6B5647]/20 via-[#4A3A2E]/10 to-transparent" />
+
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 20 }, (_, i) => {
+          const xPosition = (i * 5.2) % 100
+          const yPosition = 10 + ((i * 4.3) % 80)
+          const size = 2 + (i % 3)
+          const delay = (i * 0.7) % 10
+          const duration = 8 + ((i * 0.5) % 6)
+
+          return (
+            <div
+              key={`particle-${i}`}
+              className="absolute rounded-full bg-[#C8A882]/20 animate-pulse"
+              style={{
+                left: `${xPosition}%`,
+                top: `${yPosition}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+                animationDelay: `${delay}s`,
+                animationDuration: `${duration}s`,
+              }}
+            />
+          )
+        })}
+      </div>
 
       {/* Login Content */}
       <div className="relative z-[20] flex items-center justify-center h-full">
         <div className="text-center max-w-md mx-auto px-6">
           {/* Logo/Brand */}
           <div className="mb-8">
-            <h1 className="text-6xl font-bold text-white mb-4 tracking-wide">UpLift</h1>
-            <p className="text-white/90 text-xl mb-2">Your personal AI journal companion</p>
-            <p className="text-white/80 text-lg">for reflection, growth, and emotional wellness</p>
+            <h1 className="text-6xl font-bold text-[#FFF8E7] mb-4 tracking-wide drop-shadow-lg">UpLift</h1>
+            <p className="text-[#C8A882] text-xl mb-2 font-light">Your personal AI journal companion</p>
+            <p className="text-[#8B7355] text-lg font-light">for reflection, growth, and emotional wellness</p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-white/15 backdrop-blur-md border border-white/30 rounded-2xl p-8 shadow-2xl">
+          <div className="bg-[#3D2F27]/80 backdrop-blur-md border border-[#6B5647]/60 rounded-2xl p-8 shadow-2xl">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-white mb-2">Welcome Back</h2>
-              <p className="text-white/80">Ready to continue your journaling journey?</p>
+              <h2 className="text-2xl font-semibold text-[#FFF8E7] mb-2">Welcome Back</h2>
+              <p className="text-[#C8A882]">Ready to continue your journaling journey?</p>
             </div>
 
             <Button
               onClick={handleLogin}
               disabled={isLoading}
-              className="w-full bg-orange-600/80 hover:bg-orange-600 text-white py-4 text-lg font-medium rounded-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:opacity-70"
+              className="w-full bg-[#6B5647] hover:bg-[#2F3D2C] text-[#FFF8E7] py-4 text-lg font-medium rounded-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:opacity-70 border border-[#8B7355]/40"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                  <div className="w-5 h-5 border-2 border-[#FFF8E7]/30 border-t-[#FFF8E7] rounded-full animate-spin mr-2" />
                   Signing In...
                 </div>
               ) : (
@@ -181,7 +104,7 @@ export default function LoginPage() {
             </Button>
 
             <div className="mt-6 text-center">
-              <p className="text-white/60 text-sm">
+              <p className="text-[#8B7355] text-sm">
                 By signing in, you agree to our commitment to your privacy and wellbeing
               </p>
             </div>
@@ -189,42 +112,10 @@ export default function LoginPage() {
 
           {/* Additional Info */}
           <div className="mt-8 text-center">
-            <p className="text-white/70 text-sm">Need support? We&apos;re here 24/7 to help you on your journey</p>
+            <p className="text-[#8B7355] text-sm">Need support? We&apos;re here 24/7 to help you on your journey</p>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes bigRangeSlowFlicker {
-          0% { opacity: 0.8; transform: scaleY(1) scaleX(1) skewX(0deg); }
-          12% { opacity: 0.9; transform: scaleY(1.35) scaleX(0.7) skewX(-4deg); }
-          25% { opacity: 0.65; transform: scaleY(0.65) scaleX(1.4) skewX(5deg); }
-          37% { opacity: 0.85; transform: scaleY(1.2) scaleX(0.8) skewX(-3deg); }
-          50% { opacity: 0.7; transform: scaleY(0.75) scaleX(1.3) skewX(4.5deg); }
-          62% { opacity: 0.88; transform: scaleY(1.4) scaleX(0.65) skewX(-4.5deg); }
-          75% { opacity: 0.75; transform: scaleY(0.8) scaleX(1.25) skewX(3.5deg); }
-          87% { opacity: 0.82; transform: scaleY(1.15) scaleX(0.85) skewX(-2.5deg); }
-          100% { opacity: 0.8; transform: scaleY(1) scaleX(1) skewX(0deg); }
-        }
-        
-        .flame {
-          animation: bigRangeSlowFlicker 5s ease-in-out infinite;
-          filter: blur(0.3px);
-        }
-        
-        .flame-1 { animation-duration: 4.8s; animation-delay: 0s; }
-        .flame-2 { animation-duration: 5.2s; animation-delay: 0.4s; }
-        .flame-3 { animation-duration: 5.0s; animation-delay: 0.8s; }
-        .flame-4 { animation-duration: 5.4s; animation-delay: 1.2s; }
-        .flame-5 { animation-duration: 4.9s; animation-delay: 1.6s; }
-        .flame-6 { animation-duration: 5.1s; animation-delay: 2.0s; }
-        .flame-7 { animation-duration: 5.3s; animation-delay: 2.4s; }
-        
-        .flame-inner-1 { animation-duration: 4.5s; animation-delay: 0.2s; }
-        .flame-inner-2 { animation-duration: 4.9s; animation-delay: 0.6s; }
-        .flame-inner-3 { animation-duration: 4.7s; animation-delay: 1.0s; }
-        .flame-inner-4 { animation-duration: 5.1s; animation-delay: 1.4s; }
-      `}</style>
     </div>
   )
 }

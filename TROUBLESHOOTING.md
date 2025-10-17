@@ -5,10 +5,10 @@
 ### 1. Check Environment Variable
 First, make sure your `.env.local` file exists and has the correct content:
 
-```bash
+\`\`\`bash
 # .env.local (in your project root)
 HUGGING_FACE_API_KEY=your_actual_api_key_here
-```
+\`\`\`
 
 **Important**: 
 - Use `HUGGING_FACE_API_KEY` (no NEXT_PUBLIC_ prefix needed)
@@ -18,13 +18,13 @@ HUGGING_FACE_API_KEY=your_actual_api_key_here
 ### 2. Restart Development Server
 After creating/updating `.env.local`, restart your server:
 
-```bash
+\`\`\`bash
 # Stop current server (Ctrl+C)
 # Then restart:
 pnpm dev
 # or
 npm run dev
-```
+\`\`\`
 
 ### 3. Check Browser Console
 Open your browser's Developer Tools (F12) and look at the Console tab. You should see:

@@ -6,9 +6,27 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { Send, Menu, LogOut, BookOpen, Brain, Lightbulb, Heart, TrendingUp, Calendar } from "lucide-react"
+import {
+  Send,
+  Menu,
+  LogOut,
+  BookOpen,
+  Brain,
+  Lightbulb,
+  Heart,
+  TrendingUp,
+  Calendar,
+  X,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Leaf,
+} from "lucide-react"
 import { useRouter } from "next/navigation"
-import { AIAnalysis } from "@/components/ai-analysis"
+import dynamic from "next/dynamic"
+
+const DotGrid = dynamic(() => import("@/components/DotGrid"), { ssr: false })
 
 interface JournalEntry {
   id: string
@@ -39,21 +57,19 @@ export default function UpLiftJournal() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showTrends, setShowTrends] = useState(false)
   const [showAIAnalysis, setShowAIAnalysis] = useState(false)
+  const [aiAnalysisExpanded, setAiAnalysisExpanded] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
-  // Initialize or get today's entry
   useEffect(() => {
     const today = new Date()
     const todayKey = today.toDateString()
 
-    // Check if we already have today's entry
     const existingEntry = journalEntries.find((entry) => entry.timestamp.toDateString() === todayKey)
 
     if (!existingEntry) {
-      // Create new daily entry with unique ID
       const newEntry: JournalEntry = {
-        id: `${todayKey}-${Date.now()}`, // Make ID unique with timestamp
+        id: `${todayKey}-${Date.now()}`,
         content: "",
         timestamp: today,
       }
@@ -72,10 +88,38 @@ export default function UpLiftJournal() {
     router.push("/login")
   }
 
+  const getCurrentEntryIndex = () => {
+    if (!currentEntry) return -1
+    return journalEntries.findIndex((entry) => entry.id === currentEntry.id)
+  }
+
+  const goToPreviousEntry = () => {
+    const currentIndex = getCurrentEntryIndex()
+    if (currentIndex < journalEntries.length - 1) {
+      setCurrentEntry(journalEntries[currentIndex + 1])
+    }
+  }
+
+  const goToNextEntry = () => {
+    const currentIndex = getCurrentEntryIndex()
+    if (currentIndex > 0) {
+      setCurrentEntry(journalEntries[currentIndex - 1])
+    }
+  }
+
+  const canGoToPrevious = () => {
+    const currentIndex = getCurrentEntryIndex()
+    return currentIndex < journalEntries.length - 1
+  }
+
+  const canGoToNext = () => {
+    const currentIndex = getCurrentEntryIndex()
+    return currentIndex > 0
+  }
+
   const saveEntry = async () => {
     if (!input.trim() || !currentEntry) return
 
-    // Update current entry with new content
     const updatedEntry: JournalEntry = {
       ...currentEntry,
       content: currentEntry.content + (currentEntry.content ? "\n\n" : "") + input.trim(),
@@ -88,7 +132,6 @@ export default function UpLiftJournal() {
     setInput("")
     setIsAnalyzing(true)
 
-    // Enhanced AI analysis with Mistral integration
     try {
       const analysis = await analyzeWithMistral(input.trim())
 
@@ -101,7 +144,6 @@ export default function UpLiftJournal() {
       setCurrentEntry(finalEntry)
     } catch (error) {
       console.error("AI analysis failed:", error)
-      // Fallback to basic analysis
       const fallbackAnalysis = getBasicAnalysis(input.trim())
       const finalEntry: JournalEntry = {
         ...updatedEntry,
@@ -114,9 +156,7 @@ export default function UpLiftJournal() {
     setIsAnalyzing(false)
   }
 
-  // Mistral AI analysis using our utility functions
   const analyzeWithMistral = async (content: string) => {
-    // Create a more focused and content-specific prompt
     const prompt = `Analyze this journal entry and provide insights in JSON format:
 
 "${content}"
@@ -132,27 +172,22 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
 }`
 
     try {
-      // Import our utility functions
       const { aiAnalysis } = await import("@/lib/huggingface")
 
       const result = await aiAnalysis(prompt, "distilgpt2")
 
-      // Parse the response and extract JSON
       try {
         const analysisText = result.generated_text || ""
 
-        // Look for JSON in the response
         let jsonMatch = analysisText.match(/\{[\s\S]*\}/)
 
         if (!jsonMatch) {
-          // If no JSON found, try to extract from the full response
           jsonMatch = result.generated_text?.match(/\{[\s\S]*\}/)
         }
 
         if (jsonMatch) {
           const parsedAnalysis = JSON.parse(jsonMatch[0])
 
-          // Validate the response structure
           if (
             parsedAnalysis.emotions &&
             parsedAnalysis.feelings &&
@@ -178,7 +213,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     }
   }
 
-  // Fallback basic analysis
   const getBasicAnalysis = (content: string) => {
     const text = content.toLowerCase()
     let emotions: string[] = []
@@ -187,9 +221,7 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     let improvementTips: string[] = []
     let sentimentScore = 0.5
 
-    // Analyze specific content patterns
     const contentAnalysis = {
-      // Work/Professional
       work: {
         keywords: [
           "work",
@@ -227,7 +259,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         ],
       },
 
-      // Relationships
       relationships: {
         keywords: [
           "friend",
@@ -265,7 +296,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         ],
       },
 
-      // Health/Wellness
       health: {
         keywords: [
           "health",
@@ -302,7 +332,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         ],
       },
 
-      // Personal Growth/Goals
       growth: {
         keywords: [
           "goal",
@@ -341,7 +370,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
       },
     }
 
-    // Analyze which category best matches the content
     let bestMatch = null
     let highestScore = 0
 
@@ -353,23 +381,14 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
       }
     }
 
-    // If we have a clear content match, use that analysis
     if (bestMatch && highestScore >= 2) {
       const { data } = bestMatch
 
-      // Select random emotions from the category
       emotions = data.emotions.sort(() => Math.random() - 0.5).slice(0, 3)
-
-      // Select random feeling description
       feelings = data.feelings[Math.floor(Math.random() * data.feelings.length)]
-
-      // Select random observation
       observations = data.observations[Math.floor(Math.random() * data.observations.length)]
-
-      // Select random tips
       improvementTips = data.tips.sort(() => Math.random() - 0.5).slice(0, 4)
 
-      // Adjust sentiment based on content
       if (text.includes("happy") || text.includes("joy") || text.includes("excited") || text.includes("grateful")) {
         sentimentScore = 0.7 + Math.random() * 0.3
       } else if (
@@ -383,7 +402,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         sentimentScore = 0.4 + Math.random() * 0.4
       }
     } else {
-      // Fallback to general emotional analysis if no clear category
       const emotionKeywords = {
         positive: [
           "happy",
@@ -457,7 +475,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
 
       const positiveCount = emotionKeywords.positive.filter((word) => text.includes(word)).length
       const negativeCount = emotionKeywords.negative.filter((word) => text.includes(word)).length
-      // const reflectiveCount = emotionKeywords.reflective.filter(word => text.includes(word)).length
 
       if (positiveCount > negativeCount && positiveCount > 0) {
         emotions = ["Happy", "Positive", "Grateful"]
@@ -511,7 +528,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     }
   }
 
-  // Get trend analysis
   const getTrendAnalysis = (): TrendAnalysis => {
     if (journalEntries.length < 2) {
       return {
@@ -524,9 +540,8 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     }
 
     const entriesWithAnalysis = journalEntries.filter((entry) => entry.aiAnalysis)
-    const recentEntries = entriesWithAnalysis.slice(0, 7) // Last 7 entries
+    const recentEntries = entriesWithAnalysis.slice(0, 7)
 
-    // Calculate average sentiment
     const avgSentiment =
       recentEntries.reduce((sum, entry) => sum + (entry.aiAnalysis?.sentimentScore || 0.5), 0) / recentEntries.length
 
@@ -535,7 +550,6 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
     else if (avgSentiment < 0.3) overallMood = "Generally Challenging"
     else overallMood = "Mixed"
 
-    // Analyze emotional patterns
     const emotionCounts: { [key: string]: number } = {}
     recentEntries.forEach((entry) => {
       entry.aiAnalysis?.emotions.forEach((emotion) => {
@@ -574,142 +588,46 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
   const trends = getTrendAnalysis()
 
   return (
-    <div className="h-screen w-full relative overflow-hidden">
-      {/* Animated Fireplace Background */}
-      <div className="absolute inset-0 w-full h-full">
-        {/* Base fireplace background - solid black */}
-        <div className="absolute inset-0 bg-black" />
+    <div className="h-screen w-full relative overflow-hidden bg-[#2A1F1A]">
+      {/* Interactive Dot Grid Background */}
+      <DotGrid
+        dotSize={3}
+        gap={40}
+        baseColor="#2A1F1A"
+        activeColor="#2F3D2C"
+        proximity={120}
+        speedTrigger={80}
+        shockRadius={200}
+        shockStrength={4}
+        className="absolute inset-0 z-0 opacity-40"
+      />
 
-        {/* Simple smooth orange glow from bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-orange-600/40 via-orange-500/25 via-orange-400/15 via-orange-300/8 via-orange-200/4 via-orange-100/2 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-red-600/30 via-red-500/20 via-red-400/12 via-red-300/6 via-red-200/3 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-yellow-600/20 via-yellow-500/12 via-yellow-400/8 via-yellow-300/4 via-yellow-200/2 to-transparent" />
+      {/* Deeper gradient for more contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A1410]/50 via-transparent to-[#3D4F3A]/10 z-[1]" />
 
-        {/* Main fire bed spanning across entire bottom - taller for higher flames */}
-        <div className="absolute bottom-0 left-0 right-0 h-72 overflow-hidden">
-          {/* Fire logs base with ultra-smooth gradients */}
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-r from-amber-900/60 via-amber-850/65 via-amber-800/70 via-orange-900/80 via-orange-850/85 via-orange-800/88 via-red-900/90 via-red-850/88 via-red-800/85 via-orange-900/80 via-orange-850/75 via-orange-800/70 via-amber-900/60 via-amber-850/55 to-amber-800/50 opacity-70" />
-          <div className="absolute bottom-2 left-0 right-0 h-8 bg-gradient-to-r from-red-900/50 via-red-850/55 via-red-800/60 via-orange-800/70 via-orange-750/75 via-orange-700/78 via-amber-800/80 via-amber-750/78 via-amber-700/75 via-orange-800/70 via-orange-750/65 via-orange-700/60 via-red-900/50 via-red-850/45 to-red-800/40 opacity-60" />
-          <div className="absolute bottom-4 left-0 right-0 h-6 bg-gradient-to-r from-amber-800/40 via-amber-750/45 via-amber-700/50 via-red-800/60 via-red-750/65 via-red-700/68 via-orange-700/70 via-orange-650/68 via-orange-600/65 via-red-800/60 via-red-750/55 via-red-700/50 via-amber-800/40 via-amber-750/35 to-amber-700/30 opacity-50" />
-
-          {/* Gap-filling flames with deterministic positioning */}
-          {Array.from({ length: 100 }, (_, i) => {
-            // Use deterministic positioning based on index to avoid hydration issues
-            const basePosition = (i / 99) * 100 // Evenly distribute from 0% to 100%
-            const offset = Math.sin(i * 2.3) * Math.cos(i * 1.7) * Math.sin(i * 0.9) * 1.5
-            const position = Math.max(0, Math.min(100, basePosition + offset))
-
-            // Deterministic height variations
-            const baseHeight = 45
-            const heightVariation = Math.sin(i * 1.3) * Math.cos(i * 2.1) * Math.sin(i * 0.7) * 25
-            const additionalHeight = Math.sin(i * 3.7) * Math.cos(i * 1.9) * 12
-            const height = Math.max(25, baseHeight + heightVariation + additionalHeight)
-
-            // Deterministic width variations
-            const baseWidth = 10
-            const widthVariation = Math.cos(i * 1.8) * Math.sin(i * 2.4) * 4
-            const width = Math.max(6, baseWidth + widthVariation)
-
-            return (
-              <div
-                key={`flame-${i}`}
-                className={`flame flame-${(i % 7) + 1} absolute bottom-2 bg-gradient-to-t from-red-700 via-orange-500 to-yellow-300 opacity-85`}
-                style={{
-                  left: `${position}%`,
-                  width: `${width}px`,
-                  height: `${height}px`,
-                  clipPath:
-                    "polygon(45% 100%, 25% 85%, 35% 65%, 15% 45%, 30% 25%, 50% 35%, 65% 15%, 75% 30%, 85% 10%, 90% 25%, 80% 45%, 95% 65%, 75% 85%, 55% 100%)",
-                }}
-              />
-            )
-          })}
-
-          {/* Inner core flames with deterministic positioning */}
-          {Array.from({ length: 70 }, (_, i) => {
-            // Deterministic inner flame positioning
-            const basePosition = (i / 69) * 100 // Even distribution
-            const offset = Math.sin(i * 3.1) * Math.cos(i * 1.4) * Math.sin(i * 2.8) * 2
-            const position = Math.max(0, Math.min(100, basePosition + offset))
-
-            // Deterministic height variations
-            const baseHeight = 35
-            const heightVariation = Math.sin(i * 2.7) * Math.cos(i * 1.6) * Math.sin(i * 3.2) * 20
-            const height = Math.max(18, baseHeight + heightVariation)
-
-            // Deterministic width variations
-            const baseWidth = 8
-            const widthVariation = Math.cos(i * 2.9) * Math.sin(i * 1.8) * 3
-            const width = Math.max(4, baseWidth + widthVariation)
-
-            return (
-              <div
-                key={`inner-flame-${i}`}
-                className={`flame flame-inner-${(i % 4) + 1} absolute bottom-2 bg-gradient-to-t from-yellow-400 via-orange-300 to-yellow-100 opacity-90`}
-                style={{
-                  left: `${position}%`,
-                  width: `${width}px`,
-                  height: `${height}px`,
-                  clipPath:
-                    "polygon(50% 100%, 30% 88%, 40% 68%, 20% 48%, 35% 28%, 55% 38%, 70% 18%, 80% 33%, 90% 13%, 95% 28%, 85% 48%, 100% 68%, 80% 88%, 60% 100%)",
-                }}
-              />
-            )
-          })}
-
-          {/* Hot coals glow with ultra-smooth gradients */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-r from-red-600/60 via-red-550/62 via-red-500/65 via-orange-500/80 via-orange-450/78 via-orange-400/75 via-yellow-500/70 via-yellow-450/72 via-yellow-400/75 via-orange-500/80 via-orange-450/78 via-orange-400/75 via-red-600/60 via-red-550/58 to-red-500/55 opacity-70 animate-pulse" />
-          <div
-            className="absolute bottom-1 left-0 right-0 h-6 bg-gradient-to-r from-orange-400/50 via-orange-350/55 via-orange-300/60 via-yellow-400/70 via-yellow-350/68 via-yellow-300/65 via-red-400/60 via-red-350/62 via-red-300/65 via-yellow-400/70 via-yellow-350/68 via-yellow-300/65 via-orange-400/50 via-orange-350/48 to-orange-300/45 opacity-80 animate-pulse"
-            style={{ animationDelay: "1s" }}
+      {/* Green nature accent - corner decoration */}
+      <div className="absolute top-0 right-0 w-48 h-48 opacity-[0.06] z-[1]">
+        <svg viewBox="0 0 200 200" className="w-full h-full text-[#2F3D2C]">
+          <path
+            d="M100,10 Q120,40 100,70 Q80,100 100,130 Q120,160 100,190"
+            stroke="currentColor"
+            strokeWidth="3"
+            fill="none"
           />
-          <div
-            className="absolute bottom-2 left-0 right-0 h-4 bg-gradient-to-r from-yellow-300/40 via-yellow-250/45 via-yellow-200/50 via-orange-300/60 via-orange-250/58 via-orange-200/55 via-yellow-300/50 via-yellow-250/52 via-yellow-200/55 via-orange-300/60 via-orange-250/58 via-orange-200/55 via-yellow-300/40 via-yellow-250/38 to-yellow-200/35 opacity-60 animate-pulse"
-            style={{ animationDelay: "2s" }}
-          />
-        </div>
-
-        {/* Enhanced glowing embers with deterministic positioning */}
-        <div className="absolute inset-0">
-          {Array.from({ length: 60 }, (_, i) => {
-            // Deterministic positioning based on index
-            const xPosition = (i * 1.618) % 100 // Golden ratio distribution
-            const yPosition = 20 + ((i * 2.718) % 50) // Euler's number distribution
-            
-            // Deterministic size and timing
-            const size = 1 + (i % 3) + (i * 0.1) % 2
-            const delay = (i * 0.133) % 8
-            const duration = 3 + (i * 0.067) % 4
-
-            return (
-              <div
-                key={`ember-${i}`}
-                className="ember absolute bg-orange-400 rounded-full animate-ping"
-                style={{
-                  left: `${xPosition}%`,
-                  top: `${yPosition}%`,
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  animationDelay: `${delay}s`,
-                  animationDuration: `${duration}s`,
-                }}
-              />
-            )
-          })}
-        </div>
+          <circle cx="100" cy="30" r="10" fill="currentColor" />
+          <circle cx="100" cy="90" r="12" fill="currentColor" />
+          <circle cx="100" cy="150" r="9" fill="currentColor" />
+        </svg>
       </div>
 
-      {/* Enhanced Blur Overlay */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] z-[1]" />
-
-      {/* Sidebar */}
+      {/* Sidebar with enhanced contrast */}
       <div
-        className={`absolute left-0 top-0 h-full w-80 bg-black/80 backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 z-[30] ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        className={`absolute left-0 top-0 h-full w-80 bg-[#1A1410]/98 backdrop-blur-md border-r border-[#2F3D2C]/70 transform transition-transform duration-300 z-[30] ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 shadow-2xl`}
       >
-        <div className="p-4 border-b border-white/10">
+        <div className="p-4 border-b border-[#2F3D2C]/50">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold text-white flex items-center">
-              <BookOpen className="w-5 h-5 mr-2" />
+            <h1 className="text-xl font-bold text-[#FFF8E7] flex items-center">
+              <BookOpen className="w-5 h-5 mr-2 text-[#C8A882]" />
               UpLift Journal
             </h1>
             <div className="flex items-center space-x-2">
@@ -718,38 +636,37 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-white hover:bg-red-500/20 hover:text-red-300 transition-colors p-2"
+                  className="text-[#C8A882] hover:bg-[#3D2F27]/70 hover:text-[#B89968] transition-colors p-2"
                 >
                   <LogOut className="w-5 h-5" />
                 </Button>
-                <span className="text-xs text-white/80 mt-1">Logout</span>
+                <span className="text-xs text-[#8B7355] mt-1">Logout</span>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-white hover:bg-white/10"
+                className="lg:hidden text-[#FFF8E7] hover:bg-[#3D2F27]/70"
               >
                 ×
               </Button>
             </div>
           </div>
 
-          {/* Daily Entry Info */}
-          {/* Navigation */}
-          {/* Daily Entry Info */}
+          {/* Daily Entry Info with green accent */}
           <div
-            className="bg-orange-600/30 hover:bg-orange-600/40 rounded-lg p-3 mb-4 cursor-pointer transition-colors border border-orange-500/50"
+            className="bg-[#3D2F27] hover:bg-[#4A3A2E] rounded-lg p-3 mb-4 cursor-pointer transition-colors border border-[#6B5647]/60"
             onClick={() => {
               setShowTrends(false)
               setShowAIAnalysis(false)
+              setSidebarOpen(false)
             }}
           >
             <div className="flex items-center mb-2">
-              <Calendar className="w-4 h-4 text-orange-300 mr-2" />
-              <span className="text-white text-sm font-medium">Today&apos;s Entry</span>
+              <Calendar className="w-4 h-4 text-[#C8A882] mr-2" />
+              <span className="text-[#FFF8E7] text-sm font-medium">Today&apos;s Entry</span>
             </div>
-            <p className="text-white/90 text-xs">
+            <p className="text-[#C8A882] text-xs">
               {currentEntry?.timestamp.toLocaleDateString("en-US", {
                 weekday: "long",
                 year: "numeric",
@@ -759,14 +676,15 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
             </p>
           </div>
 
-          {/* Navigation - Remove AI Analysis tab */}
+          {/* Navigation */}
           <div className="space-y-2">
             <Button
               onClick={() => {
                 setShowTrends(true)
                 setShowAIAnalysis(false)
+                setSidebarOpen(false)
               }}
-              className={`w-full justify-start ${showTrends ? "bg-orange-600/80 text-white" : "bg-white/10 text-white hover:bg-white/20"}`}
+              className={`w-full justify-start ${showTrends ? "bg-[#4A3A2E] text-[#FFF8E7] border-l-2 border-[#2F3D2C]" : "bg-[#3D2F27]/40 text-[#C8A882] hover:bg-[#3D2F27]/70"}`}
               variant="ghost"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
@@ -776,12 +694,15 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          <h3 className="text-white text-sm font-medium mb-3">Recent Entries</h3>
+          <div className="flex items-center mb-3">
+            <h3 className="text-[#FFF8E7] text-sm font-medium">Recent Entries</h3>
+            <Leaf className="w-3 h-3 ml-2 text-[#2F3D2C]/60" />
+          </div>
           {journalEntries.slice(0, 10).map((entry, index) => (
             <Card
               key={`${entry.id}-${index}`}
-              className={`p-3 cursor-pointer transition-colors bg-white/10 border-white/20 hover:bg-white/20 ${
-                currentEntry?.id === entry.id ? "bg-white/25" : ""
+              className={`p-3 cursor-pointer transition-colors bg-[#3D2F27]/50 border-[#6B5647]/60 hover:bg-[#4A3A2E]/70 ${
+                currentEntry?.id === entry.id ? "bg-[#4A3A2E]/80 border-[#6B5647] shadow-lg" : ""
               }`}
               onClick={() => {
                 setCurrentEntry(entry)
@@ -789,19 +710,19 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
                 setSidebarOpen(false)
               }}
             >
-              <p className="text-white text-sm font-medium truncate">
+              <p className="text-[#FFF8E7] text-sm font-medium truncate">
                 {entry.timestamp.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                 })}
               </p>
-              <p className="text-white/80 text-xs">
+              <p className="text-[#C8A882] text-xs">
                 {entry.content.slice(0, 25) + (entry.content.length > 25 ? "..." : "")}
               </p>
               {entry.aiAnalysis && (
                 <div className="flex items-center mt-2">
-                  <Brain className="w-3 h-3 text-green-300 mr-1" />
-                  <span className="text-xs text-green-300">AI Analyzed</span>
+                  <Brain className="w-3 h-3 text-[#2F3D2C] mr-1" />
+                  <span className="text-xs text-[#2F3D2C]">AI Analyzed</span>
                 </div>
               )}
             </Card>
@@ -813,60 +734,97 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
       <div
         className={`flex flex-col h-full transition-all duration-300 ${sidebarOpen ? "lg:ml-80" : "lg:ml-80"} relative z-[20]`}
       >
-        {/* Header */}
-        <div className="p-4 border-b border-white/10 bg-black/50 backdrop-blur-sm">
+        {/* Header with better contrast */}
+        <div className="p-4 border-b border-[#2F3D2C]/50 bg-[#1A1410]/95 backdrop-blur-sm shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden mr-2 text-white hover:bg-white/10"
+                className="lg:hidden mr-2 text-[#FFF8E7] hover:bg-[#3D2F27]/70"
               >
                 <Menu className="w-4 h-4" />
               </Button>
-              <h2 className="text-lg font-semibold text-white flex items-center">
+              <h2 className="text-lg font-semibold text-[#FFF8E7] flex items-center">
                 {showTrends ? (
                   <>
-                    <TrendingUp className="w-5 h-5 mr-2" />
+                    <TrendingUp className="w-5 h-5 mr-2 text-[#C8A882]" />
                     Trends & Insights
                   </>
                 ) : (
                   <>
-                    <BookOpen className="w-5 h-5 mr-2" />
+                    <BookOpen className="w-5 h-5 mr-2 text-[#C8A882]" />
                     Today&apos;s Journal Entry
                   </>
                 )}
               </h2>
             </div>
-            {currentEntry && (
-              <span className="text-white/80 text-sm">
-                {currentEntry.timestamp.toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </span>
-            )}
+            <div className="flex items-center gap-3">
+              {currentEntry && (
+                <span className="text-[#8B7355] text-sm">
+                  {currentEntry.timestamp.toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
+              )}
+              {!showTrends && currentEntry?.aiAnalysis && (
+                <Button
+                  onClick={() => setAiAnalysisExpanded(!aiAnalysisExpanded)}
+                  className="bg-[#4A3A2E] hover:bg-[#2F3D2C] text-[#FFF8E7] border border-[#6B5647]/60 shadow-md"
+                  size="sm"
+                >
+                  <Brain className="w-4 h-4 mr-2" />
+                  AI Analysis
+                  {aiAnalysisExpanded ? (
+                    <ChevronUp className="w-4 h-4 ml-2" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Content with Navigation Buttons */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 relative">
+          {!showTrends && canGoToPrevious() && (
+            <Button
+              onClick={goToPreviousEntry}
+              className="fixed left-[calc(320px+1rem)] top-1/2 -translate-y-1/2 z-[25] bg-[#3D2F27]/80 hover:bg-[#4A3A2E]/90 text-[#FFF8E7] border border-[#6B5647]/60 backdrop-blur-sm shadow-lg"
+              size="icon"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </Button>
+          )}
+
+          {!showTrends && canGoToNext() && (
+            <Button
+              onClick={goToNextEntry}
+              className="fixed right-4 top-1/2 -translate-y-1/2 z-[25] bg-[#3D2F27]/80 hover:bg-[#4A3A2E]/90 text-[#FFF8E7] border border-[#6B5647]/60 backdrop-blur-sm shadow-lg"
+              size="icon"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </Button>
+          )}
+
           {showTrends ? (
-            // Trends & Insights View
             <div className="space-y-6">
-              <Card className="bg-gradient-to-r from-orange-600/30 to-red-600/30 border-orange-500/50 backdrop-blur-sm p-6">
+              <Card className="bg-[#3D2F27]/90 border-[#6B5647]/70 backdrop-blur-sm p-6 shadow-xl">
                 <div className="flex items-center mb-4">
-                  <TrendingUp className="w-6 h-6 text-orange-300 mr-2" />
-                  <h3 className="text-xl font-semibold text-white">Overall Mood</h3>
+                  <TrendingUp className="w-6 h-6 text-[#C8A882] mr-2" />
+                  <h3 className="text-xl font-semibold text-[#FFF8E7]">Overall Mood</h3>
+                  <Leaf className="w-5 h-5 ml-auto text-[#2F3D2C]/60" />
                 </div>
-                <p className="text-white text-lg mb-2">{trends.overallMood}</p>
+                <p className="text-[#FFF8E7] text-lg mb-2 font-medium">{trends.overallMood}</p>
                 <div className="flex flex-wrap gap-2">
                   {trends.emotionalPatterns.map((emotion, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-orange-500/30 text-orange-200 rounded-full text-sm border border-orange-500/50"
+                      className="px-3 py-1 bg-[#4A3A2E] text-[#FFF8E7] font-medium rounded-full text-sm border border-[#6B5647]"
                     >
                       {emotion}
                     </span>
@@ -874,123 +832,66 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
                 </div>
               </Card>
 
-              <Card className="bg-gradient-to-r from-red-600/30 to-yellow-600/30 border-red-500/50 backdrop-blur-sm p-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Weekly Insights</h3>
-                <p className="text-white/90 leading-relaxed">{trends.weeklyInsights}</p>
+              <Card className="bg-[#4A3A2E]/90 border-[#6B5647]/70 backdrop-blur-sm p-6 shadow-xl">
+                <h3 className="text-xl font-semibold text-[#FFF8E7] mb-4">Weekly Insights</h3>
+                <p className="text-[#FFF8E7] leading-relaxed font-medium">{trends.weeklyInsights}</p>
               </Card>
 
-              <Card className="bg-gradient-to-r from-yellow-600/30 to-orange-600/30 border-yellow-500/50 backdrop-blur-sm p-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Monthly Trends</h3>
-                <p className="text-white/90 leading-relaxed">{trends.monthlyTrends}</p>
+              <Card className="bg-[#6B5647]/80 border-[#8B7355]/70 backdrop-blur-sm p-6 shadow-xl">
+                <h3 className="text-xl font-semibold text-[#FFF8E7] mb-4">Monthly Trends</h3>
+                <p className="text-[#FFF8E7] leading-relaxed font-medium">{trends.monthlyTrends}</p>
               </Card>
 
-              <Card className="bg-gradient-to-r from-amber-600/30 to-red-600/30 border-amber-500/50 backdrop-blur-sm p-6">
+              <Card className="bg-[#3D2F27]/90 border-[#6B5647]/70 backdrop-blur-sm p-6 shadow-xl">
                 <div className="flex items-center mb-4">
-                  <Lightbulb className="w-6 h-6 text-yellow-300 mr-2" />
-                  <h3 className="text-xl font-semibold text-white">Recommendations</h3>
+                  <Lightbulb className="w-6 h-6 text-[#C8A882] mr-2" />
+                  <h3 className="text-xl font-semibold text-[#FFF8E7]">Recommendations</h3>
                 </div>
                 <ul className="space-y-2">
                   {trends.recommendations.map((rec, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-yellow-300 mr-2">•</span>
-                      <span className="text-white/90">{rec}</span>
+                      <span className="text-[#2F3D2C] mr-2">•</span>
+                      <span className="text-[#FFF8E7] font-medium">{rec}</span>
                     </li>
                   ))}
                 </ul>
               </Card>
             </div>
           ) : (
-            // Journal Entry View
             <>
               {!currentEntry ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <h3 className="text-3xl font-bold text-white mb-2">Welcome to Your Journal</h3>
-                    <p className="text-white/90 mb-6 text-lg">Your daily entry will be created automatically</p>
+                    <h3 className="text-3xl font-bold text-[#FFF8E7] mb-2 drop-shadow-lg">Welcome to Your Journal</h3>
+                    <p className="text-[#C8A882] mb-6 text-lg">Your daily entry will be created automatically</p>
                     <div className="animate-pulse">
-                      <div className="w-32 h-32 bg-white/10 rounded-full mx-auto mb-4 flex items-center justify-center">
-                        <Calendar className="w-16 h-16 text-white/40" />
+                      <div className="w-32 h-32 bg-[#3D2F27]/50 rounded-full mx-auto mb-4 flex items-center justify-center border border-[#6B5647]/60 shadow-xl">
+                        <Calendar className="w-16 h-16 text-[#8B7355]/80" />
                       </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6">
-                  {/* Journal Entry */}
-                  <Card className="bg-white/20 text-white border-white/30 backdrop-blur-sm p-6">
+                <div className="space-y-6 h-full flex flex-col">
+                  <Card className="bg-[#3D2F27]/80 text-[#FFF8E7] border-[#6B5647]/70 backdrop-blur-sm p-6 flex-1 flex flex-col shadow-xl">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-semibold text-white">Today&apos;s Entry</h3>
-                      <span className="text-white/80 text-sm">
+                      <h3 className="text-xl font-semibold text-[#FFF8E7]">Today&apos;s Entry</h3>
+                      <span className="text-[#8B7355] text-sm">
                         {currentEntry.timestamp.toLocaleDateString()} at {currentEntry.timestamp.toLocaleTimeString()}
                       </span>
                     </div>
-                    <p className="text-white text-lg leading-relaxed whitespace-pre-wrap">
-                      {currentEntry.content || "Start writing your thoughts for today..."}
-                    </p>
+                    <div className="flex-1 overflow-y-auto">
+                      <p className="text-[#FFF8E7] text-lg leading-relaxed whitespace-pre-wrap">
+                        {currentEntry.content || "Start writing your thoughts for today..."}
+                      </p>
+                    </div>
                   </Card>
 
-                  {/* AI Analysis */}
-                  {currentEntry.aiAnalysis && (
-                    <Card className="bg-gradient-to-r from-orange-600/30 to-red-600/30 border-orange-500/50 backdrop-blur-sm p-6">
-                      <div className="flex items-center mb-4">
-                        <Brain className="w-6 h-6 text-orange-300 mr-2" />
-                        <h3 className="text-xl font-semibold text-white">AI Analysis</h3>
-                      </div>
-
-                      {/* Emotions */}
-                      <div className="mb-4">
-                        <h4 className="text-white font-medium mb-2 flex items-center">
-                          <Heart className="w-4 h-4 mr-2 text-red-300" />
-                          Emotions Detected
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {currentEntry.aiAnalysis.emotions.map((emotion, index) => (
-                            <span
-                              key={index}
-                              className="px-3 py-1 bg-red-500/30 text-red-200 rounded-full text-sm border border-red-500/50"
-                            >
-                              {emotion}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Feelings */}
-                      <div className="mb-4">
-                        <h4 className="text-white font-medium mb-2">Overall Feeling</h4>
-                        <p className="text-white/90 leading-relaxed">{currentEntry.aiAnalysis.feelings}</p>
-                      </div>
-
-                      {/* Observations */}
-                      <div className="mb-4">
-                        <h4 className="text-white font-medium mb-2">Observations</h4>
-                        <p className="text-white/90 leading-relaxed">{currentEntry.aiAnalysis.observations}</p>
-                      </div>
-
-                      {/* Improvement Tips */}
-                      <div>
-                        <h4 className="text-white font-medium mb-2 flex items-center">
-                          <Lightbulb className="w-4 h-4 mr-2 text-yellow-300" />
-                          Tips for Improvement
-                        </h4>
-                        <ul className="space-y-2">
-                          {currentEntry.aiAnalysis.improvementTips.map((tip, index) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-yellow-300 mr-2">•</span>
-                              <span className="text-white/90">{tip}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </Card>
-                  )}
-
-                  {/* Analysis in Progress */}
                   {isAnalyzing && (
-                    <Card className="bg-gradient-to-r from-orange-600/30 to-red-600/30 border-orange-500/50 backdrop-blur-sm p-6">
+                    <Card className="bg-[#4A3A2E]/90 border-[#6B5647]/70 backdrop-blur-sm p-6 shadow-xl">
                       <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-300 mr-3"></div>
-                        <span className="text-white text-lg">AI is analyzing your entry...</span>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C8A882] mr-3"></div>
+                        <span className="text-[#FFF8E7] text-lg font-medium">AI is analyzing your entry...</span>
                       </div>
                     </Card>
                   )}
@@ -1001,55 +902,21 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input - Only show for journal entries */}
+        {/* Input with better contrast */}
         {!showTrends && (
-          <div className="p-4 border-t border-white/10 bg-black/50 backdrop-blur-sm relative">
-            {/* Fire effect behind input - deterministic flames */}
-            <div className="absolute bottom-0 left-4 right-4 h-32 overflow-hidden pointer-events-none">
-              {Array.from({ length: 50 }, (_, i) => {
-                // Deterministic positioning for input flames
-                const basePosition = (i / 49) * 100 // Even distribution
-                const offset = Math.sin(i * 2.7) * Math.cos(i * 1.9) * 1
-                const position = Math.max(0, Math.min(100, basePosition + offset))
-
-                // Deterministic height variations
-                const baseHeight = 16
-                const heightVariation = Math.sin(i * 1.8) * Math.cos(i * 2.3) * 8
-                const height = Math.max(8, baseHeight + heightVariation)
-
-                // Deterministic width variations
-                const baseWidth = 6
-                const widthVariation = Math.cos(i * 2.1) * 2
-                const width = Math.max(4, baseWidth + widthVariation)
-
-                return (
-                  <div
-                    key={`input-flame-${i}`}
-                    className={`input-flame input-flame-${(i % 5) + 1} absolute bottom-0 bg-gradient-to-t from-orange-600/40 via-red-400/25 to-yellow-300/10 opacity-60`}
-                    style={{
-                      left: `${position}%`,
-                      width: `${width}px`,
-                      height: `${height}px`,
-                      clipPath:
-                        "polygon(40% 100%, 20% 80%, 30% 60%, 10% 40%, 25% 20%, 45% 30%, 60% 10%, 70% 25%, 80% 5%, 85% 20%, 75% 40%, 90% 60%, 70% 80%, 60% 100%)",
-                    }}
-                  />
-                )
-              })}
-            </div>
-
+          <div className="p-4 border-t border-[#2F3D2C]/50 bg-[#1A1410]/95 backdrop-blur-sm relative shadow-lg">
             <div className="flex space-x-2 relative z-10">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Continue writing your thoughts for today..."
-                className="flex-1 bg-white/20 border-white/30 text-white placeholder:text-white/70 focus:border-orange-400/50 backdrop-blur-sm"
+                className="flex-1 bg-[#3D2F27]/60 border-[#6B5647]/70 text-[#FFF8E7] placeholder:text-[#8B7355] focus:border-[#2F3D2C] focus:ring-2 focus:ring-[#2F3D2C]/30 backdrop-blur-sm shadow-md"
               />
               <Button
                 onClick={saveEntry}
                 disabled={!input.trim() || isAnalyzing}
-                className="bg-orange-600/80 hover:bg-orange-600 text-white disabled:opacity-50"
+                className="bg-[#4A3A2E] hover:bg-[#2F3D2C] text-[#FFF8E7] disabled:opacity-50 border border-[#6B5647]/60 shadow-md"
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -1058,56 +925,85 @@ Please analyze the emotions, feelings, observations, and provide improvement tip
         )}
       </div>
 
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-10 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      {/* Expandable AI Analysis Panel with enhanced contrast */}
+      {aiAnalysisExpanded && currentEntry?.aiAnalysis && !showTrends && (
+        <div className="fixed inset-0 z-[40] flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-[#1A1410]/90 backdrop-blur-sm"
+            onClick={() => setAiAnalysisExpanded(false)}
+          />
+
+          <div className="relative w-full max-w-2xl max-h-[80vh] m-4 animate-in slide-in-from-right duration-300">
+            <Card className="bg-[#3D2F27]/98 border-[#6B5647]/80 backdrop-blur-md p-6 overflow-y-auto max-h-[80vh] shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center">
+                  <Brain className="w-6 h-6 text-[#C8A882] mr-2" />
+                  <h3 className="text-2xl font-semibold text-[#FFF8E7]">AI Analysis</h3>
+                  <Leaf className="w-5 h-5 ml-2 text-[#2F3D2C]/60" />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setAiAnalysisExpanded(false)}
+                  className="text-[#FFF8E7] hover:bg-[#4A3A2E]/70"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="text-[#FFF8E7] font-semibold mb-3 flex items-center text-lg">
+                  <Heart className="w-5 h-5 mr-2 text-[#B89968]" />
+                  Emotions Detected
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {currentEntry.aiAnalysis.emotions.map((emotion, index) => (
+                    <span
+                      key={index}
+                      className="px-4 py-2 bg-[#4A3A2E] text-[#FFF8E7] font-medium rounded-full text-sm border border-[#6B5647]"
+                    >
+                      {emotion}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="text-[#FFF8E7] font-semibold mb-3 text-lg">Overall Feeling</h4>
+                <p className="text-[#FFF8E7] leading-relaxed font-medium text-base">
+                  {currentEntry.aiAnalysis.feelings}
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="text-[#FFF8E7] font-semibold mb-3 text-lg">Observations</h4>
+                <p className="text-[#FFF8E7] leading-relaxed font-medium text-base">
+                  {currentEntry.aiAnalysis.observations}
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-[#FFF8E7] font-semibold mb-3 flex items-center text-lg">
+                  <Lightbulb className="w-5 h-5 mr-2 text-[#C8A882]" />
+                  Tips for Improvement
+                </h4>
+                <ul className="space-y-3">
+                  {currentEntry.aiAnalysis.improvementTips.map((tip, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="text-[#2F3D2C] mr-3 text-lg">•</span>
+                      <span className="text-[#FFF8E7] font-medium text-base">{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Card>
+          </div>
+        </div>
       )}
 
-      <style jsx>{`
-        @keyframes bigRangeFlicker {
-          0% { opacity: 0.85; transform: scaleY(1) scaleX(1) skewX(0deg); }
-          10% { opacity: 0.9; transform: scaleY(1.25) scaleX(0.8) skewX(-3deg); }
-          20% { opacity: 0.75; transform: scaleY(0.7) scaleX(1.3) skewX(4deg); }
-          30% { opacity: 0.88; transform: scaleY(1.15) scaleX(0.85) skewX(-2.5deg); }
-          40% { opacity: 0.78; transform: scaleY(0.8) scaleX(1.2) skewX(3.5deg); }
-          50% { opacity: 0.92; transform: scaleY(1.3) scaleX(0.75) skewX(-4deg); }
-          60% { opacity: 0.82; transform: scaleY(0.75) scaleX(1.25) skewX(3deg); }
-          70% { opacity: 0.89; transform: scaleY(1.2) scaleX(0.8) skewX(-3.5deg); }
-          80% { opacity: 0.8; transform: scaleY(0.85) scaleX(1.15) skewX(2.5deg); }
-          90% { opacity: 0.86; transform: scaleY(1.1) scaleX(0.9) skewX(-2deg); }
-          100% { opacity: 0.85; transform: scaleY(1) scaleX(1) skewX(0deg); }
-        }
-
-        @keyframes bigRangeGentleFlicker {
-          0%, 100% { opacity: 0.65; transform: scaleY(1) scaleX(1) skewX(0deg); }
-          25% { opacity: 0.75; transform: scaleY(1.15) scaleX(0.85) skewX(-2deg); }
-          50% { opacity: 0.55; transform: scaleY(0.8) scaleX(1.2) skewX(2.5deg); }
-          75% { opacity: 0.7; transform: scaleY(1.1) scaleX(0.9) skewX(-1.5deg); }
-        }
-
-        .flame {
-          animation: bigRangeFlicker 4s ease-in-out infinite;
-          filter: blur(0.3px);
-        }
-
-        .flame-1 { animation-duration: 3.8s; animation-delay: 0s; }
-        .flame-2 { animation-duration: 4.2s; animation-delay: 0.3s; }
-        .flame-3 { animation-duration: 4.0s; animation-delay: 0.6s; }
-        .flame-4 { animation-duration: 4.4s; animation-delay: 0.9s; }
-        .flame-5 { animation-duration: 3.9s; animation-delay: 1.2s; }
-        .flame-6 { animation-duration: 4.1s; animation-delay: 1.5s; }
-        .flame-7 { animation-duration: 4.3s; animation-delay: 1.8s; }
-
-        .flame-inner-1 { animation-duration: 3.5s; animation-delay: 0.15s; }
-        .flame-inner-2 { animation-duration: 3.9s; animation-delay: 0.45s; }
-        .flame-inner-3 { animation-duration: 3.7s; animation-delay: 0.75s; }
-        .flame-inner-4 { animation-duration: 4.1s; animation-delay: 1.05s; }
-
-        .input-flame {
-          animation: bigRangeGentleFlicker 5s ease-in-out infinite;
-          filter: blur(0.8px);
-        }
-      `}</style>
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-[#1A1410]/70 z-10 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
     </div>
   )
 }

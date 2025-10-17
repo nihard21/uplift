@@ -14,18 +14,18 @@
 - Copy the token
 
 ### 2. Create Environment File
-```bash
+\`\`\`bash
 # Copy the template
 cp env-template.txt .env.local
 
 # Edit .env.local and replace "your_api_key_here" with your actual token
 NEXT_PUBLIC_HUGGING_FACE_API_KEY=hf_your_actual_token_here
-```
+\`\`\`
 
 ### 3. Restart Development Server
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ## What's Fixed
 
