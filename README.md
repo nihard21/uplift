@@ -1,35 +1,3 @@
-# Uplift chat design
-
-*Automatically synced with your [v0.app](https://v0.app) deployments*
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/nihardabeer-6419s-projects/v0-uplift-chat-design)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/U38QiitV4Qc)
-
-## Overview
-
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
-
-## Deployment
-
-Your project is live at:
-
-**[https://vercel.com/nihardabeer-6419s-projects/v0-uplift-chat-design](https://vercel.com/nihardabeer-6419s-projects/v0-uplift-chat-design)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.app/chat/projects/U38QiitV4Qc](https://v0.app/chat/projects/U38QiitV4Qc)**
-
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
-
-
 ## Purpose
 
 Uplift is a journaling and reflection app designed to help users process their thoughts, track personal growth, and practice mindful reflection. The app provides a calm, conversational interface where users can write entries, revisit past reflections, and feel encouraged to reflect consistently.
@@ -60,6 +28,25 @@ Uplift was created to combine technology with well-being. Journaling can be a po
 3. Click AI analysis to view summary of your emotions + tips to improve
 4. Write daily journal entries to develop weekly and monthly trends and insights
 5. Revisit past entries to track progress and growth
+
+## 🛠️ Development Process
+
+During the development of Uplift, our team worked through both design and technical challenges to build a journaling experience that felt intuitive and meaningful.
+
+### Exploration and Design Iteration
+We began by defining the core purpose of the app: to support emotional reflection through a conversational journaling interface. Early iterations focused on creating a **minimal, distraction-free UI** that encouraged consistent use without overwhelming users. Several design iterations were needed to balance simplicity with functionality.
+
+### Chat-Style Interaction Logic
+A major focus of development was implementing the **chat-style interface** that allows users to write reflections naturally while still being able to revisit past entries. We refined component structure and interaction flow to ensure the experience felt smooth and responsive across sessions.
+
+### Integration and Deployment
+Uplift is built using v0.app and deployed through Vercel, which allowed us to rapidly prototype and test changes. Setting up automatic syncing between the visual editor, GitHub repository, and live deployment helped us iterate quickly while maintaining a stable codebase.
+
+### Challenges
+One challenge we faced was ensuring the chat interface remained intuitive as features were added. Early versions became cluttered, making reflection feel less natural. Through testing and iteration, we simplified layouts and reduced unnecessary prompts to keep the focus on thoughtful journaling.
+
+### Reflection
+Through this process, we learned the importance of iterative design and user-centered development.
 
 ## Future Improvements
 
